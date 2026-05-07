@@ -1,8 +1,15 @@
 {
   "cleanUrls": true,
+  "trailingSlash": false,
   "rewrites": [
-    { "source": "/", "destination": "/dashboard_overview/index.html" },
-    { "source": "/dashboard", "destination": "/dashboard_overview/index.html" },
+    {
+      "source": "/",
+      "destination": "/dashboard_overview/index.html"
+    },
+    {
+      "source": "/dashboard",
+      "destination": "/dashboard_overview/index.html"
+    },
     {
       "source": "/water-input-analysis",
       "destination": "/water_input_analysis/water-input-analysis.html"
