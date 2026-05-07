@@ -273,42 +273,42 @@
       <nav class="flex flex-col gap-1">
         <a
           class="flex items-center gap-3 px-4 py-3 bg-yellow-100 dark:bg-yellow-900/40 text-yellow-900 dark:text-yellow-100 rounded-2xl font-semibold scale-98 transition-transform"
-          href="./code.html"
+          href="./index.html"
         >
           <span class="material-symbols-outlined">dashboard</span>
           Dashboard
         </a>
         <a
           class="flex items-center gap-3 px-4 py-3 text-stone-600 dark:text-stone-400 hover:bg-stone-200/50 dark:hover:bg-stone-800/50 rounded-2xl transition-colors"
-          href="../water_input_analysis/code.html"
+          href="../water_input_analysis/water-input-analysis.html"
         >
           <span class="material-symbols-outlined">water_drop</span>
           Input Air
         </a>
         <a
           class="flex items-center gap-3 px-4 py-3 text-stone-600 dark:text-stone-400 hover:bg-stone-200/50 dark:hover:bg-stone-800/50 rounded-2xl transition-colors"
-          href="../plant_response_analysis/code.html"
+          href="../plant_response_analysis/plant-response-analysis.html"
         >
           <span class="material-symbols-outlined">local_florist</span>
           Respons Tanaman
         </a>
         <a
           class="flex items-center gap-3 px-4 py-3 text-stone-600 dark:text-stone-400 hover:bg-stone-200/50 dark:hover:bg-stone-800/50 rounded-2xl transition-colors"
-          href="../stress_analysis/code.html"
+          href="../stress_analysis/stress-analysis.html"
         >
           <span class="material-symbols-outlined">warning</span>
           Analisis Stres
         </a>
         <a
           class="flex items-center gap-3 px-4 py-3 text-stone-600 dark:text-stone-400 hover:bg-stone-200/50 dark:hover:bg-stone-800/50 rounded-2xl transition-colors"
-          href="../growth_stage_analysis/code.html"
+          href="../growth_stage_analysis/growth-stage-analysis.html"
         >
           <span class="material-symbols-outlined">timeline</span>
           Tahap Pertumbuhan
         </a>
         <a
           class="flex items-center gap-3 px-4 py-3 text-stone-600 dark:text-stone-400 hover:bg-stone-200/50 dark:hover:bg-stone-800/50 rounded-2xl transition-colors"
-          href="../insights_summary/code.html"
+          href="../insights_summary/insights-summary.html"
         >
           <span class="material-symbols-outlined">query_stats</span>
           Wawasan
@@ -444,7 +444,7 @@
                 >m³</span
               >
             </h3>
-            <a href="../plant_response_analysis/code.html">
+            <a href="../plant_response_analysis/plant-response-analysis.html">
               <button
                 class="w-full py-3 bg-surface-container-high hover:bg-primary hover:text-white text-on-surface-variant font-bold rounded-md transition-all flex items-center justify-center gap-2 group-hover:bg-primary group-hover:text-white"
               >
@@ -482,7 +482,7 @@
                 >mm/hari</span
               >
             </h3>
-            <a href="../water_input_analysis/code.html">
+            <a href="../water_input_analysis/water-input-analysis.html">
               <button
                 class="w-full py-3 bg-surface-container-high hover:bg-primary hover:text-white text-on-surface-variant font-bold rounded-md transition-all flex items-center justify-center gap-2 group-hover:bg-primary group-hover:text-white"
               >
@@ -520,7 +520,7 @@
                 >mm</span
               >
             </h3>
-            <a href="../water_input_analysis/code.html">
+            <a href="../water_input_analysis/water-input-analysis.html">
               <button
                 class="w-full py-3 bg-surface-container-high hover:bg-primary hover:text-white text-on-surface-variant font-bold rounded-md transition-all flex items-center justify-center gap-2 group-hover:bg-primary group-hover:text-white"
               >
@@ -558,7 +558,7 @@
                 >koef</span
               >
             </h3>
-            <a href="../stress_analysis/code.html">
+            <a href="../stress_analysis/stress-analysis.html">
               <button
                 class="w-full py-3 bg-surface-container-high hover:bg-primary hover:text-white text-on-surface-variant font-bold rounded-md transition-all flex items-center justify-center gap-2 group-hover:bg-primary group-hover:text-white"
               >
@@ -1711,7 +1711,8 @@
           document
             .getElementById("growth-stage-btn")
             ?.addEventListener("click", () => {
-              window.location.href = "../growth_stage_analysis/code.html";
+              window.location.href =
+                "../growth_stage_analysis/growth-stage-analysis.html";
             });
 
           // Metric card clicks
@@ -1719,10 +1720,12 @@
             card.addEventListener("click", () => {
               const metric = card.dataset.metric;
               const links = {
-                water: "../plant_response_analysis/code.html",
-                irrigation: "../water_input_analysis/code.html",
-                precipitation: "../water_input_analysis/code.html",
-                ks: "../stress_analysis/code.html",
+                water:
+                  "../plant_response_analysis/plant-response-analysis.html",
+                irrigation: "../water_input_analysis/water-input-analysis.html",
+                precipitation:
+                  "../water_input_analysis/water-input-analysis.html",
+                ks: "../stress_analysis/stress-analysis.html",
               };
               if (links[metric]) window.location.href = links[metric];
             });
