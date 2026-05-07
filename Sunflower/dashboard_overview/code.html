@@ -1,0 +1,1790 @@
+<!doctype html>
+<html class="light" lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Dashboard Ikhtisar - Sunflower Balance</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script src="../shared-data.js"></script>
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Be+Vietnam+Pro:wght@300;400;500;600&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Papa Parse untuk CSV -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary-dim": "#675706",
+              "surface-container-highest": "#e9e9de",
+              "secondary-dim": "#476016",
+              tertiary: "#8c591c",
+              "on-secondary-fixed": "#304600",
+              "on-primary-fixed-variant": "#6c5c0c",
+              "on-primary-fixed": "#4d4000",
+              "tertiary-dim": "#7e4d10",
+              "secondary-fixed": "#ceee93",
+              "on-surface": "#383833",
+              "tertiary-fixed-dim": "#edac67",
+              outline: "#81817a",
+              "on-tertiary-fixed": "#432500",
+              "surface-container-high": "#efeee5",
+              "outline-variant": "#bab9b2",
+              "on-tertiary-container": "#5f3700",
+              "on-error-container": "#520c00",
+              background: "#fefcf4",
+              error: "#be2d06",
+              "secondary-fixed-dim": "#c0df86",
+              "surface-variant": "#e9e9de",
+              "on-tertiary": "#ffffff",
+              secondary: "#536d22",
+              primary: "#746414",
+              "inverse-on-surface": "#9e9d96",
+              "tertiary-container": "#fcb973",
+              "inverse-primary": "#fce589",
+              surface: "#fefcf4",
+              "on-primary-container": "#625300",
+              "on-secondary-container": "#41590f",
+              "primary-container": "#fce589",
+              "tertiary-fixed": "#fcb973",
+              "on-secondary": "#ffffff",
+              "surface-container-low": "#fbf9f1",
+              "primary-fixed": "#fce589",
+              "surface-container": "#f5f4eb",
+              "error-container": "#f95630",
+              "primary-fixed-dim": "#edd77d",
+              "surface-tint": "#746414",
+              "on-surface-variant": "#65655f",
+              "on-background": "#383833",
+              "surface-bright": "#fefcf4",
+              "on-error": "#ffffff",
+              "surface-container-lowest": "#ffffff",
+              "surface-dim": "#e4e3d8",
+              "on-secondary-fixed-variant": "#4a6319",
+              "secondary-container": "#ceee93",
+              "on-primary": "#ffffff",
+              "inverse-surface": "#0e0f0a",
+              "error-dim": "#b92902",
+              "on-tertiary-fixed-variant": "#6c3e00",
+            },
+            borderRadius: {
+              DEFAULT: "1rem",
+              lg: "2rem",
+              xl: "3rem",
+              full: "9999px",
+            },
+            fontFamily: {
+              headline: ["Plus Jakarta Sans"],
+              body: ["Be Vietnam Pro"],
+              label: ["Be Vietnam Pro"],
+            },
+          },
+        },
+      };
+    </script>
+
+    <style>
+      body {
+        font-family: "Be Vietnam Pro", sans-serif;
+      }
+      h1,
+      h2,
+      h3,
+      .headline {
+        font-family: "Plus Jakarta Sans", sans-serif;
+      }
+      .material-symbols-outlined {
+        font-variation-settings:
+          "FILL" 0,
+          "wght" 400,
+          "GRAD" 0,
+          "opsz" 24;
+      }
+      .chart-bar {
+        transition: all 0.3s ease;
+        cursor: pointer;
+      }
+      .chart-bar:hover {
+        filter: brightness(1.1);
+        transform: scaleY(1.02);
+      }
+      .metric-card {
+        cursor: pointer;
+        transition: transform 0.2s;
+      }
+      .metric-card:hover {
+        transform: translateY(-4px);
+      }
+      @keyframes pulse-ring {
+        0% {
+          transform: scale(0.95);
+          box-shadow: 0 0 0 0 rgba(116, 100, 20, 0.7);
+        }
+        70% {
+          transform: scale(1);
+          box-shadow: 0 0 0 10px rgba(116, 100, 20, 0);
+        }
+        100% {
+          transform: scale(0.95);
+          box-shadow: 0 0 0 0 rgba(116, 100, 20, 0);
+        }
+      }
+      .live-indicator {
+        animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+      }
+      .animate-fade-in {
+        animation: fadeIn 0.5s ease-out;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .file-drop-zone {
+        border: 2px dashed #81817a;
+        transition: all 0.3s ease;
+      }
+      .file-drop-zone.dragover {
+        border-color: #746414;
+        background: rgba(116, 100, 20, 0.1);
+      }
+      /* Style untuk tombol rentang tanggal yang aktif */
+      .range-btn.active {
+        background-color: #fce589;
+        color: #4d4000;
+        border-color: #746414;
+      }
+    </style>
+  </head>
+
+  <body class="bg-surface text-on-surface selection:bg-primary-container">
+    <!-- Container Notifikasi -->
+    <div
+      id="notification-container"
+      class="fixed top-4 right-4 z-[9999] space-y-2"
+    ></div>
+
+    <!-- Modal Import CSV -->
+    <div
+      id="import-modal"
+      class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] items-center justify-center"
+      style="display: none"
+    >
+      <div
+        class="bg-surface-container-lowest p-6 rounded-2xl shadow-2xl max-w-lg w-full mx-4 animate-fade-in"
+      >
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-xl font-bold">Import Dataset CSV</h3>
+          <button
+            id="close-import-modal"
+            class="p-2 hover:bg-surface-container rounded-full transition-colors"
+          >
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+
+        <div
+          id="file-drop-zone"
+          class="file-drop-zone rounded-xl p-8 text-center mb-4"
+        >
+          <span class="material-symbols-outlined text-4xl text-outline mb-2"
+            >upload_file</span
+          >
+          <p class="text-sm text-on-surface-variant mb-2">
+            Seret file CSV ke sini atau klik untuk memilih
+          </p>
+          <input type="file" id="csv-file-input" accept=".csv" class="hidden" />
+          <button
+            id="browse-file-btn"
+            class="px-4 py-2 bg-primary-container text-on-primary-container rounded-lg font-semibold text-sm hover:brightness-110 transition-all"
+          >
+            Pilih File
+          </button>
+        </div>
+
+        <div class="bg-surface-container p-4 rounded-xl mb-4">
+          <p class="text-xs font-semibold text-on-surface-variant mb-2">
+            FORMAT CSV YANG DIHARAPKAN:
+          </p>
+          <code class="text-xs block text-tertiary">
+            date,precipitation,irrigation,water_use,soil_water_deficit,water_stress_coefficient,growth_stage
+          </code>
+        </div>
+
+        <div id="import-progress" class="hidden">
+          <div class="flex items-center gap-2 text-sm text-secondary mb-2">
+            <span class="material-symbols-outlined animate-spin"
+              >progress_activity</span
+            >
+            Memproses data...
+          </div>
+          <div class="w-full bg-surface-container rounded-full h-2">
+            <div
+              class="bg-secondary h-2 rounded-full transition-all duration-300"
+              style="width: 0%"
+              id="progress-bar"
+            ></div>
+          </div>
+        </div>
+
+        <div id="import-stats" class="hidden mt-4 space-y-2">
+          <div class="flex justify-between text-sm">
+            <span class="text-on-surface-variant">Total Baris:</span>
+            <span id="total-rows" class="font-bold">0</span>
+          </div>
+          <div class="flex justify-between text-sm">
+            <span class="text-on-surface-variant">Periode Data:</span>
+            <span id="date-range" class="font-bold">-</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar Navigasi -->
+    <aside
+      class="h-screen w-64 fixed left-0 top-0 border-r-0 bg-stone-50 dark:bg-stone-950 flex flex-col p-4 gap-2 z-50"
+    >
+      <div class="mb-8 px-4">
+        <h1 class="text-xl font-bold text-yellow-800 dark:text-yellow-200">
+          Sunflower Balance
+        </h1>
+        <p class="text-sm text-stone-500 font-medium">Irigasi Presisi</p>
+      </div>
+
+      <nav class="flex flex-col gap-1">
+        <a
+          class="flex items-center gap-3 px-4 py-3 bg-yellow-100 dark:bg-yellow-900/40 text-yellow-900 dark:text-yellow-100 rounded-2xl font-semibold scale-98 transition-transform"
+          href="./code.html"
+        >
+          <span class="material-symbols-outlined">dashboard</span>
+          Dashboard
+        </a>
+        <a
+          class="flex items-center gap-3 px-4 py-3 text-stone-600 dark:text-stone-400 hover:bg-stone-200/50 dark:hover:bg-stone-800/50 rounded-2xl transition-colors"
+          href="../water_input_analysis/code.html"
+        >
+          <span class="material-symbols-outlined">water_drop</span>
+          Input Air
+        </a>
+        <a
+          class="flex items-center gap-3 px-4 py-3 text-stone-600 dark:text-stone-400 hover:bg-stone-200/50 dark:hover:bg-stone-800/50 rounded-2xl transition-colors"
+          href="../plant_response_analysis/code.html"
+        >
+          <span class="material-symbols-outlined">local_florist</span>
+          Respons Tanaman
+        </a>
+        <a
+          class="flex items-center gap-3 px-4 py-3 text-stone-600 dark:text-stone-400 hover:bg-stone-200/50 dark:hover:bg-stone-800/50 rounded-2xl transition-colors"
+          href="../stress_analysis/code.html"
+        >
+          <span class="material-symbols-outlined">warning</span>
+          Analisis Stres
+        </a>
+        <a
+          class="flex items-center gap-3 px-4 py-3 text-stone-600 dark:text-stone-400 hover:bg-stone-200/50 dark:hover:bg-stone-800/50 rounded-2xl transition-colors"
+          href="../growth_stage_analysis/code.html"
+        >
+          <span class="material-symbols-outlined">timeline</span>
+          Tahap Pertumbuhan
+        </a>
+        <a
+          class="flex items-center gap-3 px-4 py-3 text-stone-600 dark:text-stone-400 hover:bg-stone-200/50 dark:hover:bg-stone-800/50 rounded-2xl transition-colors"
+          href="../insights_summary/code.html"
+        >
+          <span class="material-symbols-outlined">query_stats</span>
+          Wawasan
+        </a>
+      </nav>
+
+      <div
+        class="mt-auto p-4 bg-surface-container-low rounded-2xl flex items-center gap-3"
+      >
+        <div
+          class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center overflow-hidden"
+        >
+          <img
+            class="w-full h-full object-cover"
+            src="https://ui-avatars.com/api/?name=Anang&background=FACC15&color=473C08&bold=true"
+            alt="Pengguna"
+          />
+        </div>
+        <div class="overflow-hidden">
+          <p class="text-sm font-bold truncate">Anang Ismail</p>
+          <p class="text-xs text-on-surface-variant truncate">
+            Penyuka Bunga Matahari
+          </p>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Konten Utama -->
+    <main class="ml-64 min-h-screen pb-12">
+      <!-- TopAppBar -->
+      <header
+        class="sticky top-0 z-40 w-full bg-stone-50/80 dark:bg-stone-950/80 backdrop-blur-xl flex justify-between items-center px-8 py-4"
+      >
+        <div class="flex items-center gap-4">
+          <h2 class="text-2xl font-bold text-primary">
+            Dashboard Bunga Matahari
+          </h2>
+          <span
+            id="live-badge"
+            class="hidden px-3 py-1 bg-error text-white text-xs font-bold rounded-full live-indicator"
+            >LIVE</span
+          >
+          <span
+            id="data-status"
+            class="px-3 py-1 bg-secondary-container text-on-secondary-container text-xs font-bold rounded-full"
+            >Data Demo</span
+          >
+          <!-- Badge untuk menunjukkan filter aktif -->
+          <span
+            id="active-range-badge"
+            class="hidden px-3 py-1 bg-primary-container text-on-primary-container text-xs font-bold rounded-full items-center gap-1"
+          >
+            <span class="material-symbols-outlined text-xs"
+              >calendar_month</span
+            >
+            <span id="active-range-text">30 Hari</span>
+          </span>
+        </div>
+        <div class="flex items-center gap-6">
+          <div class="flex items-center gap-4 text-sm font-medium">
+            <button
+              id="import-btn"
+              class="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg font-bold hover:brightness-110 transition-all"
+            >
+              <span class="material-symbols-outlined text-sm">upload</span>
+              Import CSV
+            </button>
+            <button
+              id="growth-stage-btn"
+              class="text-yellow-800 dark:text-yellow-200 font-bold border-b-2 border-yellow-500 cursor-pointer"
+            >
+              Tahap Pertumbuhan
+            </button>
+            <!-- Tombol Rentang Tanggal - Sekarang berfungsi! -->
+            <button
+              id="date-range-btn"
+              class="flex items-center gap-2 px-4 py-2 bg-surface-container-high text-on-surface-variant rounded-lg font-bold hover:bg-primary hover:text-white transition-all"
+            >
+              <span class="material-symbols-outlined text-sm">date_range</span>
+              Rentang Tanggal
+            </button>
+          </div>
+          <div class="flex items-center gap-3">
+            <button
+              id="calendar-btn"
+              class="p-2 text-stone-500 hover:bg-stone-200/50 rounded-full transition-all"
+            >
+              <span class="material-symbols-outlined">calendar_today</span>
+            </button>
+            <button
+              id="settings-btn"
+              class="p-2 text-stone-500 hover:bg-stone-200/50 rounded-full transition-all"
+            >
+              <span class="material-symbols-outlined">settings</span>
+            </button>
+            <button
+              id="theme-toggle"
+              class="p-2 text-stone-500 hover:bg-stone-200/50 rounded-full transition-all"
+            >
+              <span class="material-symbols-outlined">dark_mode</span>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <!-- Area Konten -->
+      <div class="px-8 mt-8 space-y-8">
+        <!-- Header Bento Grid -->
+        <section class="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <!-- Kartu 1: Penggunaan Air Total -->
+          <div
+            data-metric="water"
+            class="metric-card bg-surface-container-lowest p-8 rounded-lg shadow-[0_40px_60px_-15px_rgba(116,100,20,0.06)] group hover:translate-y-[-4px] transition-transform duration-300"
+          >
+            <div class="flex justify-between items-start mb-4">
+              <div
+                class="w-12 h-12 bg-primary-container/30 rounded-2xl flex items-center justify-center text-primary"
+              >
+                <span class="material-symbols-outlined">water_drop</span>
+              </div>
+              <span
+                id="water-trend"
+                class="text-xs font-bold text-secondary bg-secondary-container px-2 py-1 rounded-full"
+                >+12%</span
+              >
+            </div>
+            <p class="text-on-surface-variant text-sm font-medium mb-1">
+              Penggunaan Air Total
+            </p>
+            <h3 class="text-4xl font-extrabold text-on-surface mb-6">
+              <span id="water-value" class="metric-value">4.280</span>
+              <span class="text-lg font-normal text-on-surface-variant ml-1"
+                >m³</span
+              >
+            </h3>
+            <a href="../plant_response_analysis/code.html">
+              <button
+                class="w-full py-3 bg-surface-container-high hover:bg-primary hover:text-white text-on-surface-variant font-bold rounded-md transition-all flex items-center justify-center gap-2 group-hover:bg-primary group-hover:text-white"
+              >
+                Lihat Detail
+                <span class="material-symbols-outlined text-sm"
+                  >arrow_forward</span
+                >
+              </button>
+            </a>
+          </div>
+
+          <!-- Kartu 2: Irigasi Rata-rata -->
+          <div
+            data-metric="irrigation"
+            class="metric-card bg-surface-container-lowest p-8 rounded-lg shadow-[0_40px_60px_-15px_rgba(116,100,20,0.06)] group hover:translate-y-[-4px] transition-transform duration-300"
+          >
+            <div class="flex justify-between items-start mb-4">
+              <div
+                class="w-12 h-12 bg-secondary-container/30 rounded-2xl flex items-center justify-center text-secondary"
+              >
+                <span class="material-symbols-outlined">opacity</span>
+              </div>
+              <span
+                id="irrigation-trend"
+                class="text-xs font-bold text-error bg-error-container/20 px-2 py-1 rounded-full"
+                >-3%</span
+              >
+            </div>
+            <p class="text-on-surface-variant text-sm font-medium mb-1">
+              Irigasi Rata-rata
+            </p>
+            <h3 class="text-4xl font-extrabold text-on-surface mb-6">
+              <span id="irrigation-value" class="metric-value">12,4</span>
+              <span class="text-lg font-normal text-on-surface-variant ml-1"
+                >mm/hari</span
+              >
+            </h3>
+            <a href="../water_input_analysis/code.html">
+              <button
+                class="w-full py-3 bg-surface-container-high hover:bg-primary hover:text-white text-on-surface-variant font-bold rounded-md transition-all flex items-center justify-center gap-2 group-hover:bg-primary group-hover:text-white"
+              >
+                Lihat Detail
+                <span class="material-symbols-outlined text-sm"
+                  >arrow_forward</span
+                >
+              </button>
+            </a>
+          </div>
+
+          <!-- Kartu 3: Presipitasi Total -->
+          <div
+            data-metric="precipitation"
+            class="metric-card bg-surface-container-lowest p-8 rounded-lg shadow-[0_40px_60px_-15px_rgba(116,100,20,0.06)] group hover:translate-y-[-4px] transition-transform duration-300"
+          >
+            <div class="flex justify-between items-start mb-4">
+              <div
+                class="w-12 h-12 bg-tertiary-container/30 rounded-2xl flex items-center justify-center text-tertiary"
+              >
+                <span class="material-symbols-outlined">cloudy_snowing</span>
+              </div>
+              <span
+                id="precip-status"
+                class="text-xs font-bold text-tertiary bg-tertiary-container/40 px-2 py-1 rounded-full"
+                >Optimal</span
+              >
+            </div>
+            <p class="text-on-surface-variant text-sm font-medium mb-1">
+              Presipitasi Total
+            </p>
+            <h3 class="text-4xl font-extrabold text-on-surface mb-6">
+              <span id="precip-value" class="metric-value">84,2</span>
+              <span class="text-lg font-normal text-on-surface-variant ml-1"
+                >mm</span
+              >
+            </h3>
+            <a href="../water_input_analysis/code.html">
+              <button
+                class="w-full py-3 bg-surface-container-high hover:bg-primary hover:text-white text-on-surface-variant font-bold rounded-md transition-all flex items-center justify-center gap-2 group-hover:bg-primary group-hover:text-white"
+              >
+                Lihat Detail
+                <span class="material-symbols-outlined text-sm"
+                  >arrow_forward</span
+                >
+              </button>
+            </a>
+          </div>
+
+          <!-- Kartu 4: Ks Rata-rata -->
+          <div
+            data-metric="ks"
+            class="metric-card bg-surface-container-lowest p-8 rounded-lg shadow-[0_40px_60px_-15px_rgba(116,100,20,0.06)] group hover:translate-y-[-4px] transition-transform duration-300"
+          >
+            <div class="flex justify-between items-start mb-4">
+              <div
+                class="w-12 h-12 bg-primary-dim/10 rounded-2xl flex items-center justify-center text-primary-dim"
+              >
+                <span class="material-symbols-outlined">psychology</span>
+              </div>
+              <span
+                id="ks-status"
+                class="text-xs font-bold text-on-primary-container bg-primary-container px-2 py-1 rounded-full"
+                >Tinggi</span
+              >
+            </div>
+            <p class="text-on-surface-variant text-sm font-medium mb-1">
+              Rata-rata Ks
+            </p>
+            <h3 class="text-4xl font-extrabold text-on-surface mb-6">
+              <span id="ks-value" class="metric-value">0,92</span>
+              <span class="text-lg font-normal text-on-surface-variant ml-1"
+                >koef</span
+              >
+            </h3>
+            <a href="../stress_analysis/code.html">
+              <button
+                class="w-full py-3 bg-surface-container-high hover:bg-primary hover:text-white text-on-surface-variant font-bold rounded-md transition-all flex items-center justify-center gap-2 group-hover:bg-primary group-hover:text-white"
+              >
+                Lihat Detail
+                <span class="material-symbols-outlined text-sm"
+                  >arrow_forward</span
+                >
+              </button>
+            </a>
+          </div>
+        </section>
+
+        <!-- Bagian Grafik -->
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <!-- Penggunaan Air Seiring Waktu -->
+          <div class="bg-surface-container-low p-8 rounded-lg">
+            <div class="flex justify-between items-center mb-8">
+              <div>
+                <h3 class="text-xl font-bold">Penggunaan Air Seiring Waktu</h3>
+                <p class="text-on-surface-variant text-sm">
+                  Tren konsumsi harian (m³)
+                </p>
+              </div>
+              <div class="flex gap-2">
+                <span
+                  class="flex items-center gap-1 text-xs font-bold text-on-surface-variant"
+                >
+                  <span class="w-3 h-3 rounded-full bg-primary"></span>
+                  Konsumsi
+                </span>
+              </div>
+            </div>
+            <div class="aspect-[16/9] relative">
+              <canvas id="waterChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Presipitasi vs Irigasi -->
+          <div class="bg-surface-container-low p-8 rounded-lg">
+            <div class="flex justify-between items-center mb-8">
+              <div>
+                <h3 class="text-xl font-bold">Sumber Kelembaban</h3>
+                <p class="text-on-surface-variant text-sm">
+                  Presipitasi vs Irigasi (mm)
+                </p>
+              </div>
+              <div class="flex gap-4">
+                <span
+                  class="flex items-center gap-1 text-xs font-bold text-on-surface-variant"
+                >
+                  <span class="w-3 h-3 rounded-sm bg-secondary"></span>
+                  Irigasi
+                </span>
+                <span
+                  class="flex items-center gap-1 text-xs font-bold text-on-surface-variant"
+                >
+                  <span class="w-3 h-3 rounded-sm bg-tertiary"></span>
+                  Presipitasi
+                </span>
+              </div>
+            </div>
+            <div class="aspect-[16/9] relative">
+              <canvas id="moistureChart"></canvas>
+            </div>
+          </div>
+        </section>
+
+        <!-- Baris Bento Sekunder -->
+        <section class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <!-- Ks Seiring Waktu -->
+          <div class="lg:col-span-2 bg-surface-container-low p-8 rounded-lg">
+            <div class="flex justify-between items-center mb-8">
+              <div>
+                <h3 class="text-xl font-bold">Koefisien Stres Air (Ks)</h3>
+                <p class="text-on-surface-variant text-sm">
+                  Indeks respons stres tanaman (0-1,0)
+                </p>
+              </div>
+              <select
+                id="ks-time-range"
+                class="bg-surface border-none text-sm font-bold rounded-md px-4 py-2 ring-1 ring-outline-variant/30 cursor-pointer"
+              >
+                <option value="7">7 Hari Terakhir</option>
+                <option value="30" selected>30 Hari Terakhir</option>
+                <option value="90">Musim Ini</option>
+              </select>
+            </div>
+            <div class="aspect-[21/9] relative">
+              <canvas id="ksChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Kartu Ringkasan Lahan -->
+          <div
+            class="bg-primary rounded-lg p-8 text-on-primary relative overflow-hidden flex flex-col justify-between"
+          >
+            <div class="relative z-10">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="material-symbols-outlined">verified</span>
+                <span class="text-sm font-bold tracking-widest uppercase"
+                  >Pertumbuhan Sehat</span
+                >
+              </div>
+              <h3 class="text-3xl font-extrabold leading-tight">
+                Lahan Anda <span id="health-percentage">92%</span> seimbang hari
+                ini.
+              </h3>
+            </div>
+            <div class="relative z-10 space-y-4">
+              <p class="text-primary-container/80 text-sm">
+                Kondisi saat ini optimal untuk fase reproduktif. Tidak
+                diperlukan irigasi segera.
+              </p>
+              <button
+                id="export-report-btn"
+                class="bg-primary-container text-on-primary-container px-6 py-3 rounded-md font-bold text-sm shadow-lg hover:brightness-110 transition-all flex items-center gap-2"
+              >
+                <span class="material-symbols-outlined text-sm">download</span>
+                Ekspor Laporan Tanah
+              </button>
+            </div>
+            <div class="absolute -right-12 -bottom-12 w-48 h-48 opacity-20">
+              <span class="material-symbols-outlined text-[12rem]"
+                >local_florist</span
+              >
+            </div>
+          </div>
+        </section>
+
+        <!-- Tabel Data Terbaru -->
+        <section class="bg-surface-container-low p-8 rounded-lg">
+          <div class="flex justify-between items-center mb-6">
+            <div>
+              <h3 class="text-xl font-bold">Data Terbaru</h3>
+              <p class="text-on-surface-variant text-sm">
+                <span id="table-row-info">7</span> entri data terakhir dari
+                dataset
+              </p>
+            </div>
+            <button
+              id="view-all-data-btn"
+              class="text-primary font-bold text-sm hover:underline"
+            >
+              Lihat Semua Data →
+            </button>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead>
+                <tr class="border-b border-outline-variant/30">
+                  <th
+                    class="text-left py-3 px-4 font-bold text-on-surface-variant"
+                  >
+                    Tanggal
+                  </th>
+                  <th
+                    class="text-right py-3 px-4 font-bold text-on-surface-variant"
+                  >
+                    Presipitasi (mm)
+                  </th>
+                  <th
+                    class="text-right py-3 px-4 font-bold text-on-surface-variant"
+                  >
+                    Irigasi (mm)
+                  </th>
+                  <th
+                    class="text-right py-3 px-4 font-bold text-on-surface-variant"
+                  >
+                    Penggunaan Air (m³)
+                  </th>
+                  <th
+                    class="text-right py-3 px-4 font-bold text-on-surface-variant"
+                  >
+                    Ks
+                  </th>
+                  <th
+                    class="text-left py-3 px-4 font-bold text-on-surface-variant"
+                  >
+                    Tahap
+                  </th>
+                </tr>
+              </thead>
+              <tbody id="recent-data-table">
+                <!-- Diisi oleh JavaScript -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- Tombol Aksi Mengambang -->
+    <button
+      id="sim-toggle"
+      class="fixed bottom-8 right-8 w-16 h-16 bg-primary rounded-full shadow-xl flex items-center justify-center text-white hover:scale-110 transition-transform z-50 pulse-ring"
+    >
+      <span
+        id="sim-icon"
+        class="material-symbols-outlined text-3xl"
+        style="font-variation-settings: &quot;FILL&quot; 1"
+        >play_arrow</span
+      >
+    </button>
+
+    <!-- Modal Rentang Tanggal - Sekarang Berfungsi! -->
+    <div
+      id="date-modal"
+      class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] items-center justify-center"
+      style="display: none"
+    >
+      <div
+        class="bg-surface-container-lowest p-6 rounded-2xl shadow-2xl max-w-md w-full mx-4 animate-fade-in"
+      >
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-xl font-bold">Pilih Rentang Tanggal</h3>
+          <button
+            id="close-date-modal"
+            class="p-2 hover:bg-surface-container rounded-full transition-colors"
+          >
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+
+        <p class="text-sm text-on-surface-variant mb-4">
+          Pilih periode data yang ingin ditampilkan di dashboard
+        </p>
+
+        <div class="space-y-2">
+          <button
+            data-range="7"
+            class="range-btn w-full p-4 text-left rounded-xl border-2 border-transparent hover:border-primary-container transition-all flex justify-between items-center"
+          >
+            <div class="flex items-center gap-3">
+              <span class="material-symbols-outlined text-primary"
+                >calendar_view_week</span
+              >
+              <div>
+                <span class="font-semibold block">7 Hari Terakhir</span>
+                <span class="text-xs text-on-surface-variant"
+                  >Tampilan mingguan</span
+                >
+              </div>
+            </div>
+            <span
+              class="material-symbols-outlined text-primary opacity-0 check-icon"
+              >check_circle</span
+            >
+          </button>
+
+          <button
+            data-range="30"
+            class="range-btn w-full p-4 text-left rounded-xl border-2 border-transparent hover:border-primary-container transition-all flex justify-between items-center active"
+          >
+            <div class="flex items-center gap-3">
+              <span class="material-symbols-outlined text-primary"
+                >calendar_view_month</span
+              >
+              <div>
+                <span class="font-semibold block">30 Hari Terakhir</span>
+                <span class="text-xs text-on-surface-variant"
+                  >Tampilan bulanan</span
+                >
+              </div>
+            </div>
+            <span class="material-symbols-outlined text-primary check-icon"
+              >check_circle</span
+            >
+          </button>
+
+          <button
+            data-range="90"
+            class="range-btn w-full p-4 text-left rounded-xl border-2 border-transparent hover:border-primary-container transition-all flex justify-between items-center"
+          >
+            <div class="flex items-center gap-3">
+              <span class="material-symbols-outlined text-primary"
+                >calendar_month</span
+              >
+              <div>
+                <span class="font-semibold block">90 Hari Terakhir</span>
+                <span class="text-xs text-on-surface-variant"
+                  >Tampilan kuartalan</span
+                >
+              </div>
+            </div>
+            <span
+              class="material-symbols-outlined text-primary opacity-0 check-icon"
+              >check_circle</span
+            >
+          </button>
+
+          <button
+            data-range="all"
+            class="range-btn w-full p-4 text-left rounded-xl border-2 border-transparent hover:border-primary-container transition-all flex justify-between items-center"
+          >
+            <div class="flex items-center gap-3">
+              <span class="material-symbols-outlined text-primary"
+                >history</span
+              >
+              <div>
+                <span class="font-semibold block">Semua Data</span>
+                <span class="text-xs text-on-surface-variant"
+                  >Tampilkan seluruh dataset</span
+                >
+              </div>
+            </div>
+            <span
+              class="material-symbols-outlined text-primary opacity-0 check-icon"
+              >check_circle</span
+            >
+          </button>
+        </div>
+
+        <div class="mt-4 p-4 bg-surface-container rounded-xl">
+          <div class="flex items-center gap-2 text-sm text-on-surface-variant">
+            <span class="material-symbols-outlined text-primary">info</span>
+            <span
+              >Data yang ditampilkan:
+              <strong id="data-count-info">30 hari</strong></span
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Pengaturan -->
+    <div
+      id="settings-modal"
+      class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] items-center justify-center"
+      style="display: none"
+    >
+      <div
+        class="bg-surface-container-lowest p-6 rounded-2xl shadow-2xl max-w-md w-full mx-4 animate-fade-in"
+      >
+        <h3 class="text-xl font-bold mb-4">Pengaturan Dashboard</h3>
+        <div class="space-y-4">
+          <div
+            class="flex justify-between items-center p-4 bg-surface-container rounded-xl"
+          >
+            <span class="font-semibold">Segarkan Otomatis</span>
+            <button
+              id="auto-refresh-toggle"
+              class="relative inline-flex h-6 w-11 items-center rounded-full bg-primary transition-colors"
+            >
+              <span
+                class="translate-x-6 inline-block h-4 w-4 transform rounded-full bg-white transition-transform"
+              ></span>
+            </button>
+          </div>
+          <div
+            class="flex justify-between items-center p-4 bg-surface-container rounded-xl"
+          >
+            <span class="font-semibold">Tampilkan Notifikasi</span>
+            <button
+              id="notifications-toggle"
+              class="relative inline-flex h-6 w-11 items-center rounded-full bg-primary transition-colors"
+            >
+              <span
+                class="translate-x-6 inline-block h-4 w-4 transform rounded-full bg-white transition-transform"
+              ></span>
+            </button>
+          </div>
+          <div
+            class="flex justify-between items-center p-4 bg-surface-container rounded-xl"
+          >
+            <span class="font-semibold">Mode Gelap</span>
+            <button
+              id="dark-mode-toggle"
+              class="relative inline-flex h-6 w-11 items-center rounded-full bg-stone-300 transition-colors"
+            >
+              <span
+                class="translate-x-1 inline-block h-4 w-4 transform rounded-full bg-white transition-transform"
+              ></span>
+            </button>
+          </div>
+        </div>
+        <button
+          id="close-settings-modal"
+          class="mt-4 w-full py-3 bg-surface-container-high rounded-xl font-bold hover:bg-surface-container transition-colors"
+        >
+          Tutup
+        </button>
+      </div>
+    </div>
+
+    <!-- JavaScript Aplikasi -->
+    <script>
+      // ==========================================
+      // APLIKASI DASHBOARD SUNFLOWER BALANCE
+      // ==========================================
+
+      const DashboardApp = (function () {
+        // Manajemen State
+        const state = {
+          isPlaying: false,
+          simulationInterval: null,
+          data: [],
+          chartInstances: {},
+          darkMode: localStorage.getItem("darkMode") === "true",
+          dateRange: parseInt(localStorage.getItem("dateRange")) || 30, // Default 30 hari
+          autoRefresh: localStorage.getItem("autoRefresh") !== "false",
+          notifications: localStorage.getItem("notifications") !== "false",
+          isRealData: false,
+        };
+
+        // Fungsi Utilitas
+        const utils = {
+          formatNumber: (num, decimals = 1) => {
+            if (num === undefined || num === null || isNaN(num)) return "0";
+            return num.toLocaleString("id-ID", {
+              minimumFractionDigits: decimals,
+              maximumFractionDigits: decimals,
+            });
+          },
+
+          formatDate: (dateStr) => {
+            if (!dateStr) return "-";
+            const date = new Date(dateStr);
+            if (isNaN(date)) return dateStr;
+            return date.toLocaleDateString("id-ID", {
+              day: "numeric",
+              month: "short",
+              year: "2-digit",
+            });
+          },
+
+          showNotification: (title, message, type = "info") => {
+            if (!state.notifications) return;
+
+            const container = document.getElementById("notification-container");
+            const notif = document.createElement("div");
+            const colors = {
+              info: "border-primary bg-surface-container-lowest",
+              success: "border-secondary bg-secondary-container/30",
+              warning: "border-tertiary bg-tertiary-container/30",
+              error: "border-error bg-error-container/20",
+            };
+
+            notif.className = `${colors[type]} border-2 p-4 rounded-xl shadow-lg max-w-sm animate-fade-in flex items-start gap-3`;
+            notif.innerHTML = `
+        <span class="material-symbols-outlined ${type === "error" ? "text-error" : type === "success" ? "text-secondary" : "text-primary"}">
+          ${type === "success" ? "check_circle" : type === "error" ? "error" : "info"}
+        </span>
+        <div>
+          <div class="font-bold text-sm">${title}</div>
+          <div class="text-xs text-on-surface-variant mt-1">${message}</div>
+        </div>
+      `;
+
+            container.appendChild(notif);
+            setTimeout(() => {
+              notif.style.opacity = "0";
+              notif.style.transform = "translateX(100%)";
+              setTimeout(() => notif.remove(), 300);
+            }, 4000);
+          },
+        };
+
+        // Inisialisasi Chart
+        const charts = {
+          init: () => {
+            charts.renderWaterChart();
+            charts.renderMoistureChart();
+            charts.renderKsChart();
+          },
+
+          renderWaterChart: () => {
+            const ctx = document.getElementById("waterChart").getContext("2d");
+            // Gunakan dateRange dari state, atau semua data jika 'all'
+            const days =
+              state.dateRange === "all" ? state.data.length : state.dateRange;
+            const data = state.data.slice(-days);
+
+            if (state.chartInstances.water) {
+              state.chartInstances.water.destroy();
+            }
+
+            state.chartInstances.water = new Chart(ctx, {
+              type: "line",
+              data: {
+                labels: data.map((d) => utils.formatDate(d.date)),
+                datasets: [
+                  {
+                    label: "Penggunaan Air (m³)",
+                    data: data.map((d) => d.water_use),
+                    borderColor: "#746414",
+                    backgroundColor: "rgba(116, 100, 20, 0.1)",
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: data.length > 60 ? 2 : 4, // Lebih kecil jika data banyak
+                    pointBackgroundColor: "#746414",
+                  },
+                ],
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                  y: { beginAtZero: true, grid: { color: "rgba(0,0,0,0.05)" } },
+                  x: {
+                    grid: { display: false },
+                    ticks: {
+                      maxTicksLimit: data.length > 30 ? 8 : 12,
+                    },
+                  },
+                },
+              },
+            });
+          },
+
+          // ==========================================
+          // PERBAIKAN UNTUK renderMoistureChart
+          // Ganti seluruh fungsi ini di dalam objek charts
+          // ==========================================
+
+          renderMoistureChart: () => {
+            const ctx = document
+              .getElementById("moistureChart")
+              .getContext("2d");
+
+            // PERBAIKAN: Gunakan dateRange yang sama seperti chart lainnya
+            // Hapus Math.min(7, ...) yang membatasi hanya 7 hari
+            const days =
+              state.dateRange === "all" ? state.data.length : state.dateRange;
+            const data = state.data.slice(-days);
+
+            if (state.chartInstances.moisture) {
+              state.chartInstances.moisture.destroy();
+            }
+
+            state.chartInstances.moisture = new Chart(ctx, {
+              type: "bar",
+              data: {
+                labels: data.map((d) => utils.formatDate(d.date)),
+                datasets: [
+                  {
+                    label: "Irigasi (mm)",
+                    data: data.map((d) => d.irrigation),
+                    backgroundColor: "#536d22",
+                    borderRadius: 4,
+                  },
+                  {
+                    label: "Presipitasi (mm)",
+                    data: data.map((d) => d.precipitation),
+                    backgroundColor: "#8c591c",
+                    borderRadius: 4,
+                  },
+                ],
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                  legend: { display: false },
+                  tooltip: {
+                    mode: "index",
+                    intersect: false,
+                  },
+                },
+                scales: {
+                  y: {
+                    beginAtZero: true,
+                    grid: { color: "rgba(0,0,0,0.05)" },
+                    stacked: false, // Ubah ke true jika ingin stacked bar
+                  },
+                  x: {
+                    grid: { display: false },
+                    ticks: {
+                      maxTicksLimit: data.length > 30 ? 8 : 12,
+                    },
+                  },
+                },
+                interaction: {
+                  mode: "nearest",
+                  axis: "x",
+                  intersect: false,
+                },
+              },
+            });
+          },
+
+          renderKsChart: () => {
+            const ctx = document.getElementById("ksChart").getContext("2d");
+            // Gunakan dateRange dari state
+            const days =
+              state.dateRange === "all" ? state.data.length : state.dateRange;
+            const data = state.data.slice(-days);
+
+            if (state.chartInstances.ks) {
+              state.chartInstances.ks.destroy();
+            }
+
+            const ksData = data.map((d) => d.water_stress_coefficient);
+            const pointColors = ksData.map((v) =>
+              v < 0.65 ? "#be2d06" : "#746414",
+            );
+
+            state.chartInstances.ks = new Chart(ctx, {
+              type: "line",
+              data: {
+                labels: data.map((d) => utils.formatDate(d.date)),
+                datasets: [
+                  {
+                    label: "Koefisien Stres (Ks)",
+                    data: ksData,
+                    borderColor: "#746414",
+                    backgroundColor: "rgba(206, 238, 147, 0.3)",
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.3,
+                    pointRadius: data.length > 60 ? 0 : 5, // Hilangkan point jika data banyak
+                    pointBackgroundColor: pointColors,
+                    pointBorderColor: "#fff",
+                    pointBorderWidth: 2,
+                  },
+                ],
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                  y: { min: 0, max: 1.2, grid: { color: "rgba(0,0,0,0.05)" } },
+                  x: {
+                    grid: { display: false },
+                    ticks: {
+                      maxTicksLimit: data.length > 30 ? 8 : 12,
+                    },
+                  },
+                },
+              },
+            });
+          },
+        };
+
+        // Update Tabel Data Terbaru
+        const updateRecentTable = () => {
+          const tbody = document.getElementById("recent-data-table");
+          // Tampilkan 7 data terakhir dari range yang dipilih
+          const days =
+            state.dateRange === "all" ? 7 : Math.min(7, state.dateRange);
+          const recentData = state.data.slice(-days).reverse();
+
+          document.getElementById("table-row-info").textContent =
+            recentData.length;
+
+          tbody.innerHTML = recentData
+            .map(
+              (row) => `
+      <tr class="border-b border-outline-variant/10 hover:bg-surface-container/50 transition-colors">
+        <td class="py-3 px-4">${utils.formatDate(row.date)}</td>
+        <td class="py-3 px-4 text-right">${row.precipitation}</td>
+        <td class="py-3 px-4 text-right">${row.irrigation}</td>
+        <td class="py-3 px-4 text-right font-semibold">${row.water_use}</td>
+        <td class="py-3 px-4 text-right">
+          <span class="px-2 py-1 rounded-full text-xs font-bold ${row.water_stress_coefficient < 0.65 ? "bg-error-container text-error" : "bg-secondary-container text-secondary"}">
+            ${row.water_stress_coefficient}
+          </span>
+        </td>
+        <td class="py-3 px-4">
+          <span class="px-2 py-1 bg-primary-container/30 rounded-full text-xs font-semibold text-primary">
+            ${row.growth_stage}
+          </span>
+        </td>
+      </tr>
+    `,
+            )
+            .join("");
+        };
+
+        // Update Metrik Summary
+        const updateMetrics = () => {
+          const days =
+            state.dateRange === "all" ? state.data.length : state.dateRange;
+          const data = state.data.slice(-days);
+
+          if (data.length === 0) return;
+
+          const totalWater = data.reduce(
+            (sum, d) => sum + (parseFloat(d.water_use) || 0),
+            0,
+          );
+          const avgIrrigation =
+            data.reduce((sum, d) => sum + (parseFloat(d.irrigation) || 0), 0) /
+            data.length;
+          const totalPrecip = data.reduce(
+            (sum, d) => sum + (parseFloat(d.precipitation) || 0),
+            0,
+          );
+          const avgKs =
+            data.reduce(
+              (sum, d) => sum + (parseFloat(d.water_stress_coefficient) || 0),
+              0,
+            ) / data.length;
+
+          document.getElementById("water-value").textContent =
+            utils.formatNumber(totalWater, 0);
+          document.getElementById("irrigation-value").textContent =
+            utils.formatNumber(avgIrrigation, 1);
+          document.getElementById("precip-value").textContent =
+            utils.formatNumber(totalPrecip, 1);
+          document.getElementById("ks-value").textContent = utils.formatNumber(
+            avgKs,
+            2,
+          );
+          document.getElementById("health-percentage").textContent =
+            Math.round(avgKs * 100) + "%";
+
+          // Update status Ks
+          const ksStatus = document.getElementById("ks-status");
+          if (avgKs >= 0.85) {
+            ksStatus.textContent = "Optimal";
+            ksStatus.className =
+              "text-xs font-bold text-on-secondary-container bg-secondary-container px-2 py-1 rounded-full";
+          } else if (avgKs >= 0.65) {
+            ksStatus.textContent = "Sedang";
+            ksStatus.className =
+              "text-xs font-bold text-on-tertiary-container bg-tertiary-container px-2 py-1 rounded-full";
+          } else {
+            ksStatus.textContent = "Stres";
+            ksStatus.className =
+              "text-xs font-bold text-on-error-container bg-error-container px-2 py-1 rounded-full";
+          }
+        };
+
+        // Update semua komponen
+        const updateAll = () => {
+          updateMetrics();
+          updateRecentTable();
+          charts.init();
+          updateRangeBadge();
+        };
+
+        // Update badge rentang tanggal aktif
+        const updateRangeBadge = () => {
+          const badge = document.getElementById("active-range-badge");
+          const badgeText = document.getElementById("active-range-text");
+
+          if (state.dateRange === "all") {
+            badgeText.textContent = "Semua Data";
+          } else {
+            badgeText.textContent = `${state.dateRange} Hari`;
+          }
+
+          badge.classList.remove("hidden");
+          badge.classList.add("flex");
+        };
+
+        // Handler untuk modal rentang tanggal
+        const dateRangeHandler = {
+          init: () => {
+            const modal = document.getElementById("date-modal");
+            const openBtn = document.getElementById("date-range-btn");
+            const closeBtn = document.getElementById("close-date-modal");
+            const rangeButtons = document.querySelectorAll(".range-btn");
+
+            // Buka modal
+            openBtn?.addEventListener("click", () => {
+              dateRangeHandler.syncUI();
+              modal.style.display = "flex";
+            });
+
+            // Tutup modal
+            closeBtn?.addEventListener("click", () => {
+              modal.style.display = "none";
+            });
+
+            // Tutup saat klik backdrop
+            modal?.addEventListener("click", (e) => {
+              if (e.target === modal) {
+                modal.style.display = "none";
+              }
+            });
+
+            // Pilih rentang
+            rangeButtons.forEach((btn) => {
+              btn.addEventListener("click", () => {
+                const range = btn.dataset.range;
+                dateRangeHandler.setRange(range);
+
+                // Update UI active state
+                rangeButtons.forEach((b) => {
+                  b.classList.remove("active");
+                  b.querySelector(".check-icon").classList.add("opacity-0");
+                });
+                btn.classList.add("active");
+                btn.querySelector(".check-icon").classList.remove("opacity-0");
+
+                // Update info text
+                const infoText =
+                  range === "all"
+                    ? "seluruh dataset"
+                    : `${range} hari terakhir`;
+                document.getElementById("data-count-info").textContent =
+                  infoText;
+              });
+            });
+          },
+
+          syncUI: () => {
+            const rangeButtons = document.querySelectorAll(".range-btn");
+            const currentRange = state.dateRange.toString();
+
+            rangeButtons.forEach((btn) => {
+              const isActive = btn.dataset.range === currentRange;
+              btn.classList.toggle("active", isActive);
+              btn
+                .querySelector(".check-icon")
+                .classList.toggle("opacity-0", !isActive);
+            });
+
+            const infoText =
+              currentRange === "all"
+                ? "seluruh dataset"
+                : `${currentRange} hari terakhir`;
+            document.getElementById("data-count-info").textContent = infoText;
+          },
+
+          setRange: (range) => {
+            const days = range === "all" ? "all" : parseInt(range);
+            state.dateRange = days;
+            localStorage.setItem("dateRange", days);
+
+            // Tutup modal setelah dipilih
+            setTimeout(() => {
+              document.getElementById("date-modal").style.display = "none";
+              updateAll();
+
+              const message =
+                range === "all"
+                  ? "Menampilkan semua data"
+                  : `Menampilkan data ${range} hari terakhir`;
+              utils.showNotification(
+                "Rentang Tanggal Diubah",
+                message,
+                "success",
+              );
+            }, 200);
+          },
+        };
+
+        // Handler Import CSV
+        const csvHandler = {
+          init: () => {
+            console.log("Initializing CSV handler...");
+            const dropZone = document.getElementById("file-drop-zone");
+            const fileInput = document.getElementById("csv-file-input");
+            const browseBtn = document.getElementById("browse-file-btn");
+            const importBtn = document.getElementById("import-btn");
+
+            if (!dropZone || !fileInput || !browseBtn) {
+              console.error("CSV elements not found!");
+              return;
+            }
+
+            // Buka modal saat tombol Import diklik
+            importBtn?.addEventListener("click", (e) => {
+              e.preventDefault();
+              document.getElementById("import-modal").style.display = "flex";
+              console.log("Import modal opened");
+            });
+
+            // Tutup modal
+            document
+              .getElementById("close-import-modal")
+              ?.addEventListener("click", () => {
+                document.getElementById("import-modal").style.display = "none";
+              });
+
+            // Drag & Drop events
+            ["dragenter", "dragover", "dragleave", "drop"].forEach(
+              (eventName) => {
+                dropZone.addEventListener(
+                  eventName,
+                  (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                  },
+                  false,
+                );
+              },
+            );
+
+            dropZone.addEventListener("dragenter", () =>
+              dropZone.classList.add("dragover"),
+            );
+            dropZone.addEventListener("dragleave", () =>
+              dropZone.classList.remove("dragover"),
+            );
+            dropZone.addEventListener("drop", (e) => {
+              dropZone.classList.remove("dragover");
+              const files = e.dataTransfer.files;
+              console.log("File dropped:", files);
+              if (files.length > 0) csvHandler.processFile(files[0]);
+            });
+
+            // File input via browse button
+            browseBtn.addEventListener("click", (e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              fileInput.value = "";
+              fileInput.click();
+            });
+
+            fileInput.addEventListener("change", (e) => {
+              console.log("File selected:", e.target.files);
+              if (e.target.files.length > 0)
+                csvHandler.processFile(e.target.files[0]);
+            });
+
+            // Klik di drop zone untuk browse
+            dropZone.addEventListener("click", (e) => {
+              if (
+                e.target === dropZone ||
+                e.target.closest(".file-drop-zone") === dropZone
+              ) {
+                fileInput.click();
+              }
+            });
+
+            // Tutup modal saat klik di luar
+            document
+              .getElementById("import-modal")
+              ?.addEventListener("click", (e) => {
+                if (e.target === document.getElementById("import-modal")) {
+                  document.getElementById("import-modal").style.display =
+                    "none";
+                }
+              });
+          },
+
+          processFile: (file) => {
+            console.log("Processing file:", file.name, file.type, file.size);
+
+            if (!file.name.endsWith(".csv") && file.type !== "text/csv") {
+              utils.showNotification(
+                "Format Tidak Valid",
+                "Harap upload file CSV (.csv)",
+                "error",
+              );
+              return;
+            }
+
+            const progressDiv = document.getElementById("import-progress");
+            const progressBar = document.getElementById("progress-bar");
+            const statsDiv = document.getElementById("import-stats");
+
+            progressDiv.classList.remove("hidden");
+            statsDiv.classList.add("hidden");
+            progressBar.style.width = "10%";
+
+            Papa.parse(file, {
+              header: true,
+              dynamicTyping: false,
+              skipEmptyLines: true,
+              complete: (results) => {
+                console.log("Parse complete:", results);
+                progressBar.style.width = "50%";
+
+                const smartParse = (val) => {
+                  if (val === undefined || val === null || val === "") return 0;
+                  const cleaned = String(val).replace(",", ".").trim();
+                  const num = parseFloat(cleaned);
+                  return isNaN(num) ? 0 : num;
+                };
+
+                const processedData = results.data
+                  .filter((row) => row.date)
+                  .map((row) => {
+                    let finalDate = "";
+                    const rawDate = String(row.date).trim();
+
+                    if (rawDate.includes("/")) {
+                      const parts = rawDate.split("/");
+                      if (parts.length === 3) {
+                        let day = parts[0].padStart(2, "0");
+                        let month = parts[1].padStart(2, "0");
+                        let year = parts[2];
+
+                        if (year.length === 2) year = "20" + year;
+
+                        if (parseInt(month) > 12) {
+                          const temp = day;
+                          day = month;
+                          month = temp;
+                        }
+                        finalDate = `${year}-${month}-${day}`;
+                      }
+                    } else {
+                      try {
+                        const d = new Date(rawDate);
+                        if (!isNaN(d))
+                          finalDate = d.toISOString().split("T")[0];
+                      } catch (e) {}
+                    }
+
+                    if (!finalDate)
+                      finalDate = new Date().toISOString().split("T")[0];
+
+                    return {
+                      date: finalDate,
+                      precipitation: smartParse(row.precipitation),
+                      irrigation: smartParse(row.irrigation),
+                      water_use: smartParse(row.water_use),
+                      soil_water_deficit: smartParse(row.soil_water_deficit),
+                      water_stress_coefficient:
+                        smartParse(row.water_stress_coefficient) || 1,
+                      growth_stage: row.growth_stage || "Normal",
+                    };
+                  });
+
+                progressBar.style.width = "80%";
+
+                if (processedData.length === 0) {
+                  utils.showNotification(
+                    "Error",
+                    "Tidak ada data valid. Pastikan judul kolom sesuai format (date, precipitation, dll).",
+                    "error",
+                  );
+                  progressDiv.classList.add("hidden");
+                  return;
+                }
+
+                // Simpan ke Shared Data
+                SunflowerData.saveData(processedData, file.name);
+
+                // Update state lokal
+                state.data = processedData;
+                state.isRealData = true;
+
+                // Update UI Status Data
+                document.getElementById("data-status").textContent = "Data CSV";
+                document.getElementById("data-status").className =
+                  "px-3 py-1 bg-primary-container text-on-primary-container text-xs font-bold rounded-full";
+                document.getElementById("total-rows").textContent =
+                  processedData.length;
+
+                const dates = processedData
+                  .map((d) => new Date(d.date))
+                  .filter((d) => !isNaN(d));
+                if (dates.length > 0) {
+                  const minDate = new Date(Math.min(...dates));
+                  const maxDate = new Date(Math.max(...dates));
+                  document.getElementById("date-range").textContent =
+                    `${minDate.toLocaleDateString("id-ID")} - ${maxDate.toLocaleDateString("id-ID")}`;
+                }
+
+                progressBar.style.width = "100%";
+                statsDiv.classList.remove("hidden");
+
+                setTimeout(() => {
+                  document.getElementById("import-modal").style.display =
+                    "none";
+                  updateAll();
+                  utils.showNotification(
+                    "Import Berhasil",
+                    `${processedData.length} baris data berhasil dibaca.`,
+                    "success",
+                  );
+                }, 800);
+              },
+              error: (error) => {
+                console.error("PapaParse error:", error);
+                utils.showNotification("Import Gagal", error.message, "error");
+                progressDiv.classList.add("hidden");
+              },
+            });
+          },
+        };
+
+        // Inisialisasi
+        const init = () => {
+          console.log("🌻 Memulai inisialisasi dashboard...");
+
+          // AMBIL DATA DARI SHARED STORAGE
+          const initialState = SunflowerData.init();
+          state.data = initialState.data;
+          state.isRealData = initialState.isRealData;
+
+          console.log(
+            `📊 Data loaded: ${state.data.length} baris dari ${initialState.sourceFile}`,
+          );
+
+          // Update badge status
+          const statusBadge = document.getElementById("data-status");
+          if (state.isRealData) {
+            statusBadge.textContent = initialState.sourceFile;
+            statusBadge.className =
+              "px-3 py-1 bg-primary-container text-on-primary-container text-xs font-bold rounded-full";
+          }
+
+          // Apply tema tersimpan
+          if (state.darkMode) {
+            document.documentElement.classList.add("dark");
+            const themeToggle = document.getElementById("theme-toggle");
+            if (themeToggle) {
+              const span = themeToggle.querySelector("span");
+              if (span) span.textContent = "light_mode";
+            }
+          }
+
+          // Inisialisasi komponen
+          csvHandler.init();
+          dateRangeHandler.init(); // Inisialisasi handler rentang tanggal
+
+          // Event listeners lainnya
+          document
+            .getElementById("sim-toggle")
+            ?.addEventListener("click", () => {
+              utils.showNotification("Simulasi", "Fitur simulasi demo", "info");
+            });
+
+          document
+            .getElementById("theme-toggle")
+            ?.addEventListener("click", () => {
+              state.darkMode = !state.darkMode;
+              localStorage.setItem("darkMode", state.darkMode);
+              document.documentElement.classList.toggle("dark", state.darkMode);
+              const icon = document
+                .getElementById("theme-toggle")
+                ?.querySelector("span");
+              if (icon)
+                icon.textContent = state.darkMode ? "light_mode" : "dark_mode";
+            });
+
+          document
+            .getElementById("ks-time-range")
+            ?.addEventListener("change", () => {
+              charts.renderKsChart();
+            });
+
+          document
+            .getElementById("export-report-btn")
+            ?.addEventListener("click", () => {
+              const dataStr = JSON.stringify(state.data, null, 2);
+              const blob = new Blob([dataStr], { type: "application/json" });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement("a");
+              a.href = url;
+              a.download = `laporan-sunflower-${new Date().toISOString().split("T")[0]}.json`;
+              a.click();
+              utils.showNotification(
+                "Ekspor Berhasil",
+                "Laporan telah diunduh",
+                "success",
+              );
+            });
+
+          document
+            .getElementById("growth-stage-btn")
+            ?.addEventListener("click", () => {
+              window.location.href = "../growth_stage_analysis/code.html";
+            });
+
+          // Metric card clicks
+          document.querySelectorAll("[data-metric]").forEach((card) => {
+            card.addEventListener("click", () => {
+              const metric = card.dataset.metric;
+              const links = {
+                water: "../plant_response_analysis/code.html",
+                irrigation: "../water_input_analysis/code.html",
+                precipitation: "../water_input_analysis/code.html",
+                ks: "../stress_analysis/code.html",
+              };
+              if (links[metric]) window.location.href = links[metric];
+            });
+          });
+
+          // Listen untuk update dari halaman lain
+          window.addEventListener("sunflower-data-updated", (e) => {
+            console.log("🔄 Data updated from another page:", e.detail);
+
+            state.data = SunflowerData.getData();
+            state.isRealData = SunflowerData.isRealData();
+
+            updateAll();
+
+            const sourceName = e.detail?.source || "CSV";
+            utils.showNotification(
+              "Data Updated",
+              `Data baru dari ${sourceName}`,
+              "success",
+            );
+          });
+
+          // Render awal
+          setTimeout(() => {
+            updateAll();
+            console.log("✅ Dashboard ready");
+          }, 100);
+
+          utils.showNotification(
+            "Dashboard Siap",
+            `Sumber: ${initialState.sourceFile}`,
+            "success",
+          );
+        };
+        return { init };
+      })();
+
+      // Mulai aplikasi
+      document.addEventListener("DOMContentLoaded", function () {
+        console.log("📄 DOM Content Loaded");
+        if (typeof DashboardApp !== "undefined") {
+          DashboardApp.init();
+        } else {
+          console.error("❌ DashboardApp tidak ditemukan!");
+        }
+      });
+
+      // Fallback jika DOM sudah siap
+      if (
+        document.readyState === "complete" ||
+        document.readyState === "interactive"
+      ) {
+        setTimeout(function () {
+          if (
+            typeof DashboardApp !== "undefined" &&
+            !window.dashboardInitialized
+          ) {
+            window.dashboardInitialized = true;
+            DashboardApp.init();
+          }
+        }, 1);
+      }
+    </script>
+  </body>
+</html>

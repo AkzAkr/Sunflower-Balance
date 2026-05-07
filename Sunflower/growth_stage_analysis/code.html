@@ -1,0 +1,1224 @@
+<!doctype html>
+<html class="light" lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Analisis Tahap Pertumbuhan - Sunflower Balance</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script src="../shared-data.js"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Be+Vietnam+Pro:wght@300;400;500;600&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary-dim": "#675706",
+              "surface-container-highest": "#e9e9de",
+              "secondary-dim": "#476016",
+              tertiary: "#8c591c",
+              "on-secondary-fixed": "#304600",
+              "on-primary-fixed-variant": "#6c5c0c",
+              "on-primary-fixed": "#4d4000",
+              "tertiary-dim": "#7e4d10",
+              "secondary-fixed": "#ceee93",
+              "on-surface": "#383833",
+              "tertiary-fixed-dim": "#edac67",
+              outline: "#81817a",
+              "on-tertiary-fixed": "#432500",
+              "surface-container-high": "#efeee5",
+              "outline-variant": "#bab9b2",
+              "on-tertiary-container": "#5f3700",
+              "on-error-container": "#520c00",
+              background: "#fefcf4",
+              error: "#be2d06",
+              "secondary-fixed-dim": "#c0df86",
+              "surface-variant": "#e9e9de",
+              "on-tertiary": "#ffffff",
+              secondary: "#536d22",
+              primary: "#746414",
+              "inverse-on-surface": "#9e9d96",
+              "tertiary-container": "#fcb973",
+              "inverse-primary": "#fce589",
+              surface: "#fefcf4",
+              "on-primary-container": "#625300",
+              "on-secondary-container": "#41590f",
+              "primary-container": "#fce589",
+              "tertiary-fixed": "#fcb973",
+              "on-secondary": "#ffffff",
+              "surface-container-low": "#fbf9f1",
+              "primary-fixed": "#fce589",
+              "surface-container": "#f5f4eb",
+              "error-container": "#f95630",
+              "primary-fixed-dim": "#edd77d",
+              "surface-tint": "#746414",
+              "on-surface-variant": "#65655f",
+              "on-background": "#383833",
+              "surface-bright": "#fefcf4",
+              "on-error": "#ffffff",
+              "surface-container-lowest": "#ffffff",
+              "surface-dim": "#e4e3d8",
+              "on-secondary-fixed-variant": "#4a6319",
+              "secondary-container": "#ceee93",
+              "on-primary": "#ffffff",
+              "inverse-surface": "#0e0f0a",
+              "error-dim": "#b92902",
+              "on-tertiary-fixed-variant": "#6c3e00",
+            },
+            borderRadius: {
+              DEFAULT: "1rem",
+              lg: "2rem",
+              xl: "3rem",
+              full: "9999px",
+            },
+            fontFamily: {
+              headline: ["Plus Jakarta Sans"],
+              body: ["Be Vietnam Pro"],
+              label: ["Be Vietnam Pro"],
+            },
+          },
+        },
+      };
+    </script>
+
+    <style>
+      body {
+        font-family: "Be Vietnam Pro", sans-serif;
+      }
+      h1,
+      h2,
+      h3,
+      .headline {
+        font-family: "Plus Jakarta Sans", sans-serif;
+      }
+      .material-symbols-outlined {
+        font-variation-settings:
+          "FILL" 0,
+          "wght" 400,
+          "GRAD" 0,
+          "opsz" 24;
+      }
+      .animate-fade-in {
+        animation: fadeIn 0.5s ease-out;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .stage-card {
+        transition: all 0.3s ease;
+        cursor: pointer;
+      }
+      .stage-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 40px -10px rgba(116, 100, 20, 0.2);
+      }
+      .stage-card.active {
+        ring: 3px solid #746414;
+        background-color: #fce589;
+      }
+      .stage-card.filtered-out {
+        opacity: 0.4;
+        transform: scale(0.95);
+      }
+      .data-row {
+        transition: all 0.3s ease;
+      }
+      .data-row.hidden {
+        display: none;
+      }
+      .data-row.highlighted {
+        background-color: #fce589;
+      }
+    </style>
+  </head>
+
+  <body class="bg-surface text-on-surface selection:bg-primary-container">
+    <!-- Container Notifikasi -->
+    <div
+      id="notification-container"
+      class="fixed top-4 right-4 z-[9999] space-y-2"
+    ></div>
+
+    <!-- Sidebar Navigasi -->
+    <aside
+      class="h-screen w-64 fixed left-0 top-0 border-r-0 bg-stone-50 dark:bg-stone-950 flex flex-col p-4 gap-2 z-50"
+    >
+      <div class="mb-8 px-4">
+        <h1 class="text-xl font-bold text-yellow-800 dark:text-yellow-200">
+          Sunflower Balance
+        </h1>
+        <p class="text-sm text-stone-500 font-medium">Irigasi Presisi</p>
+      </div>
+
+      <nav class="flex flex-col gap-1">
+        <a
+          class="flex items-center gap-3 px-4 py-3 text-stone-600 dark:text-stone-400 hover:bg-stone-200/50 dark:hover:bg-stone-800/50 rounded-2xl transition-colors"
+          href="../dashboard_overview/code.html"
+        >
+          <span class="material-symbols-outlined">dashboard</span>
+          Dashboard
+        </a>
+        <a
+          class="flex items-center gap-3 px-4 py-3 text-stone-600 dark:text-stone-400 hover:bg-stone-200/50 dark:hover:bg-stone-800/50 rounded-2xl transition-colors"
+          href="../water_input_analysis/code.html"
+        >
+          <span class="material-symbols-outlined">water_drop</span>
+          Input Air
+        </a>
+        <a
+          class="flex items-center gap-3 px-4 py-3 text-stone-600 dark:text-stone-400 hover:bg-stone-200/50 dark:hover:bg-stone-800/50 rounded-2xl transition-colors"
+          href="../plant_response_analysis/code.html"
+        >
+          <span class="material-symbols-outlined">local_florist</span>
+          Respons Tanaman
+        </a>
+        <a
+          class="flex items-center gap-3 px-4 py-3 text-stone-600 dark:text-stone-400 hover:bg-stone-200/50 dark:hover:bg-stone-800/50 rounded-2xl transition-colors"
+          href="../stress_analysis/code.html"
+        >
+          <span class="material-symbols-outlined">warning</span>
+          Analisis Stres
+        </a>
+        <a
+          class="flex items-center gap-3 px-4 py-3 bg-yellow-100 dark:bg-yellow-900/40 text-yellow-900 dark:text-yellow-100 rounded-2xl font-semibold scale-98 transition-transform"
+          href="./code.html"
+        >
+          <span class="material-symbols-outlined">timeline</span>
+          Tahap Pertumbuhan
+        </a>
+        <a
+          class="flex items-center gap-3 px-4 py-3 text-stone-600 dark:text-stone-400 hover:bg-stone-200/50 dark:hover:bg-stone-800/50 rounded-2xl transition-colors"
+          href="../insights_summary/code.html"
+        >
+          <span class="material-symbols-outlined">query_stats</span>
+          Wawasan
+        </a>
+      </nav>
+
+      <div
+        class="mt-auto p-4 bg-surface-container-low rounded-2xl flex items-center gap-3"
+      >
+        <div
+          class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center overflow-hidden"
+        >
+          <img
+            class="w-full h-full object-cover"
+            src="https://ui-avatars.com/api/?name=Anang&background=FACC15&color=473C08&bold=true"
+            alt="Pengguna"
+          />
+        </div>
+        <div class="overflow-hidden">
+          <p class="text-sm font-bold truncate">Anang Ismail</p>
+          <p class="text-xs text-on-surface-variant truncate">
+            Penyuka Bunga Matahari
+          </p>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Konten Utama -->
+    <main class="ml-64 min-h-screen pb-12">
+      <!-- Header -->
+      <header
+        class="sticky top-0 z-40 w-full bg-stone-50/80 dark:bg-stone-950/80 backdrop-blur-xl flex justify-between items-center px-8 py-4"
+      >
+        <div class="flex items-center gap-4">
+          <h2 class="text-2xl font-bold text-primary">
+            Analisis Tahap Pertumbuhan
+          </h2>
+          <span
+            id="data-status"
+            class="px-3 py-1 bg-secondary-container text-on-secondary-container text-xs font-bold rounded-full"
+            >Data Demo</span
+          >
+          <span
+            id="filter-badge"
+            class="hidden px-3 py-1 bg-primary-container text-on-primary-container text-xs font-bold rounded-full items-center gap-1"
+          >
+            <span class="material-symbols-outlined text-xs">filter_alt</span>
+            <span id="filter-text">Filter Aktif</span>
+          </span>
+        </div>
+        <div class="flex items-center gap-3">
+          <button
+            id="reset-filter-btn"
+            class="hidden px-4 py-2 bg-surface-container-high text-on-surface-variant rounded-lg font-bold hover:bg-primary hover:text-white transition-all text-sm"
+          >
+            Reset Filter
+          </button>
+          <button
+            id="theme-toggle"
+            class="p-2 text-stone-500 hover:bg-stone-200/50 rounded-full transition-all"
+          >
+            <span class="material-symbols-outlined">dark_mode</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Area Konten -->
+      <div class="px-8 mt-8 space-y-8">
+        <!-- Info Banner -->
+        <div
+          class="bg-primary-container p-6 rounded-2xl flex items-start gap-4"
+        >
+          <span class="material-symbols-outlined text-primary text-3xl"
+            >info</span
+          >
+          <div>
+            <h3 class="font-bold text-on-primary-container mb-1">
+              Tahap Pertumbuhan Tanaman
+            </h3>
+            <p class="text-sm text-on-primary-container/80">
+              Klik kartu tahap (R3, R8, R9) di bawah untuk melihat data
+              spesifik. Data akan difilter sesuai tahap pertumbuhan dari CSV.
+            </p>
+          </div>
+        </div>
+
+        <!-- Tahap Pertumbuhan Cards -->
+        <section>
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xl font-bold">Tahap Pertumbuhan</h3>
+            <p class="text-sm text-on-surface-variant">
+              Klik untuk filter data
+            </p>
+          </div>
+          <div
+            class="grid grid-cols-1 md:grid-cols-3 gap-6"
+            id="growth-stages-container"
+          >
+            <!-- R3 - Early Flowering -->
+            <div
+              class="stage-card bg-surface-container-lowest p-6 rounded-2xl"
+              data-stage="R3"
+              onclick="filterByStage('R3')"
+            >
+              <div class="flex items-center gap-3 mb-4">
+                <div
+                  class="w-12 h-12 bg-tertiary-container rounded-2xl flex items-center justify-center text-tertiary"
+                >
+                  <span class="material-symbols-outlined">local_florist</span>
+                </div>
+                <div>
+                  <span
+                    class="text-xs font-bold text-tertiary bg-tertiary-container/30 px-2 py-1 rounded-full"
+                    >R3</span
+                  >
+                  <h4 class="font-bold">Pembungaan Awal</h4>
+                </div>
+              </div>
+              <p class="text-sm text-on-surface-variant mb-4">
+                Awal pembentukan bunga, kebutuhan air meningkat signifikan.
+              </p>
+              <div class="space-y-2">
+                <div class="flex justify-between items-center text-sm">
+                  <span class="text-on-surface-variant">Jumlah Data:</span>
+                  <span class="font-bold text-tertiary" id="r3-count">-</span>
+                </div>
+                <div class="flex justify-between items-center text-sm">
+                  <span class="text-on-surface-variant">Rata-rata Air:</span>
+                  <span class="font-bold text-tertiary" id="r3-water">-</span>
+                </div>
+                <div class="flex justify-between items-center text-sm">
+                  <span class="text-on-surface-variant">Rata-rata Ks:</span>
+                  <span class="font-bold text-tertiary" id="r3-ks">-</span>
+                </div>
+              </div>
+              <div class="mt-3 w-full bg-surface-container rounded-full h-2">
+                <div
+                  class="bg-tertiary h-2 rounded-full transition-all duration-500"
+                  id="r3-bar"
+                  style="width: 0%"
+                ></div>
+              </div>
+            </div>
+
+            <!-- R8 - Ripening -->
+            <div
+              class="stage-card bg-surface-container-lowest p-6 rounded-2xl"
+              data-stage="R8"
+              onclick="filterByStage('R8')"
+            >
+              <div class="flex items-center gap-3 mb-4">
+                <div
+                  class="w-12 h-12 bg-secondary-container rounded-2xl flex items-center justify-center text-secondary"
+                >
+                  <span class="material-symbols-outlined">grain</span>
+                </div>
+                <div>
+                  <span
+                    class="text-xs font-bold text-secondary bg-secondary-container/30 px-2 py-1 rounded-full"
+                    >R8</span
+                  >
+                  <h4 class="font-bold">Pematangan</h4>
+                </div>
+              </div>
+              <p class="text-sm text-on-surface-variant mb-4">
+                Biji mulai mengeras dan berkembang, kebutuhan air menurun.
+              </p>
+              <div class="space-y-2">
+                <div class="flex justify-between items-center text-sm">
+                  <span class="text-on-surface-variant">Jumlah Data:</span>
+                  <span class="font-bold text-secondary" id="r8-count">-</span>
+                </div>
+                <div class="flex justify-between items-center text-sm">
+                  <span class="text-on-surface-variant">Rata-rata Air:</span>
+                  <span class="font-bold text-secondary" id="r8-water">-</span>
+                </div>
+                <div class="flex justify-between items-center text-sm">
+                  <span class="text-on-surface-variant">Rata-rata Ks:</span>
+                  <span class="font-bold text-secondary" id="r8-ks">-</span>
+                </div>
+              </div>
+              <div class="mt-3 w-full bg-surface-container rounded-full h-2">
+                <div
+                  class="bg-secondary h-2 rounded-full transition-all duration-500"
+                  id="r8-bar"
+                  style="width: 0%"
+                ></div>
+              </div>
+            </div>
+
+            <!-- R9 - Maturity -->
+            <div
+              class="stage-card bg-surface-container-lowest p-6 rounded-2xl"
+              data-stage="R9"
+              onclick="filterByStage('R9')"
+            >
+              <div class="flex items-center gap-3 mb-4">
+                <div
+                  class="w-12 h-12 bg-primary-container rounded-2xl flex items-center justify-center text-primary"
+                >
+                  <span class="material-symbols-outlined">check_circle</span>
+                </div>
+                <div>
+                  <span
+                    class="text-xs font-bold text-primary bg-primary-container/30 px-2 py-1 rounded-full"
+                    >R9</span
+                  >
+                  <h4 class="font-bold">Kematangan Penuh</h4>
+                </div>
+              </div>
+              <p class="text-sm text-on-surface-variant mb-4">
+                Siap panen, konsumsi air minimal, fokus pada pengeringan.
+              </p>
+              <div class="space-y-2">
+                <div class="flex justify-between items-center text-sm">
+                  <span class="text-on-surface-variant">Jumlah Data:</span>
+                  <span class="font-bold text-primary" id="r9-count">-</span>
+                </div>
+                <div class="flex justify-between items-center text-sm">
+                  <span class="text-on-surface-variant">Rata-rata Air:</span>
+                  <span class="font-bold text-primary" id="r9-water">-</span>
+                </div>
+                <div class="flex justify-between items-center text-sm">
+                  <span class="text-on-surface-variant">Rata-rata Ks:</span>
+                  <span class="font-bold text-primary" id="r9-ks">-</span>
+                </div>
+              </div>
+              <div class="mt-3 w-full bg-surface-container rounded-full h-2">
+                <div
+                  class="bg-primary h-2 rounded-full transition-all duration-500"
+                  id="r9-bar"
+                  style="width: 0%"
+                ></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Statistik Tahap -->
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <!-- Distribusi Tahap -->
+          <div class="bg-surface-container-low p-8 rounded-2xl">
+            <div class="flex justify-between items-center mb-6">
+              <div>
+                <h3 class="text-xl font-bold">Distribusi Tahap Pertumbuhan</h3>
+                <p class="text-on-surface-variant text-sm">
+                  Persentase data per tahap dari CSV
+                </p>
+              </div>
+            </div>
+            <div class="aspect-square max-h-80 relative">
+              <canvas id="stageDistributionChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Water Consumption Profile -->
+          <div class="bg-surface-container-low p-8 rounded-2xl">
+            <div class="flex justify-between items-center mb-6">
+              <div>
+                <h3 class="text-xl font-bold">Profil Konsumsi Air</h3>
+                <p class="text-on-surface-variant text-sm">
+                  Rata-rata penggunaan air per tahap (m³)
+                </p>
+              </div>
+            </div>
+            <div class="aspect-square max-h-80 relative">
+              <canvas id="waterProfileChart"></canvas>
+            </div>
+          </div>
+        </section>
+
+        <!-- Tabel Detail Data CSV -->
+        <section class="bg-surface-container-low p-8 rounded-2xl">
+          <div class="flex justify-between items-center mb-6">
+            <div>
+              <h3 class="text-xl font-bold">Detail Data CSV</h3>
+              <p class="text-on-surface-variant text-sm">
+                Data mentah dari file CSV yang difilter
+              </p>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-sm text-on-surface-variant">Filter:</span>
+              <select
+                id="stage-filter"
+                class="bg-surface border-none text-sm font-bold rounded-md px-4 py-2 ring-1 ring-outline-variant/30 cursor-pointer"
+                onchange="filterByStage(this.value)"
+              >
+                <option value="all">Semua Tahap</option>
+                <option value="R3">R3 - Pembungaan Awal</option>
+                <option value="R8">R8 - Pematangan</option>
+                <option value="R9">R9 - Kematangan Penuh</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto max-h-96 overflow-y-auto">
+            <table class="w-full text-sm">
+              <thead class="sticky top-0 bg-surface-container-low z-10">
+                <tr class="border-b border-outline-variant/30">
+                  <th
+                    class="text-left py-3 px-4 font-bold text-on-surface-variant"
+                  >
+                    Tanggal
+                  </th>
+                  <th
+                    class="text-left py-3 px-4 font-bold text-on-surface-variant"
+                  >
+                    Tahap
+                  </th>
+                  <th
+                    class="text-right py-3 px-4 font-bold text-on-surface-variant"
+                  >
+                    Presipitasi (mm)
+                  </th>
+                  <th
+                    class="text-right py-3 px-4 font-bold text-on-surface-variant"
+                  >
+                    Irigasi (mm)
+                  </th>
+                  <th
+                    class="text-right py-3 px-4 font-bold text-on-surface-variant"
+                  >
+                    Penggunaan Air (m³)
+                  </th>
+                  <th
+                    class="text-right py-3 px-4 font-bold text-on-surface-variant"
+                  >
+                    Ks
+                  </th>
+                  <th
+                    class="text-right py-3 px-4 font-bold text-on-surface-variant"
+                  >
+                    Status
+                  </th>
+                </tr>
+              </thead>
+              <tbody id="csv-data-table">
+                <!-- Diisi oleh JavaScript -->
+              </tbody>
+            </table>
+          </div>
+          <div
+            class="mt-4 flex justify-between items-center text-sm text-on-surface-variant"
+          >
+            <span id="showing-text">Menampilkan semua data</span>
+            <span id="total-rows">0 baris</span>
+          </div>
+        </section>
+
+        <!-- Timeline Pertumbuhan -->
+        <section class="bg-surface-container-low p-8 rounded-2xl">
+          <h3 class="text-xl font-bold mb-6">Timeline Pertumbuhan</h3>
+          <div class="relative">
+            <div
+              class="absolute left-8 top-0 bottom-0 w-0.5 bg-outline-variant/30"
+            ></div>
+            <div class="space-y-8" id="timeline-container">
+              <!-- Diisi oleh JavaScript -->
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- JavaScript -->
+    <script>
+      const GrowthStageApp = (function () {
+        const state = {
+          data: [],
+          filteredData: [],
+          chartInstances: {},
+          darkMode: localStorage.getItem("darkMode") === "true",
+          currentFilter: "all",
+        };
+
+        // Mapping tahap dari CSV ke kategori yang ditampilkan
+        const stageMapping = {
+          // Vegetative stages
+          V1: "vegetative",
+          V2: "vegetative",
+          V3: "vegetative",
+          V4: "vegetative",
+          V5: "vegetative",
+          V6: "vegetative",
+          V7: "vegetative",
+          V8: "vegetative",
+          V9: "vegetative",
+          V10: "vegetative",
+          V11: "vegetative",
+          V12: "vegetative",
+          // Reproductive stages
+          R1: "R3",
+          R2: "R3",
+          R3: "R3",
+          R4: "R3",
+          R5: "R3",
+          R6: "R3",
+          R7: "R3",
+          R8: "R8",
+          R9: "R9",
+          // Alternatif naming
+          Planting: "planting",
+          Flowering: "R3",
+          Ripening: "R8",
+          Maturity: "R9",
+        };
+
+        const utils = {
+          formatNumber: (num, decimals = 2) => {
+            if (num === undefined || num === null || isNaN(num)) return "-";
+            return num.toLocaleString("id-ID", {
+              minimumFractionDigits: decimals,
+              maximumFractionDigits: decimals,
+            });
+          },
+
+          formatDate: (dateStr) => {
+            if (!dateStr) return "-";
+            const date = new Date(dateStr);
+            if (isNaN(date)) return dateStr;
+            return date.toLocaleDateString("id-ID", {
+              day: "numeric",
+              month: "short",
+              year: "numeric",
+            });
+          },
+
+          showNotification: (title, message, type = "info") => {
+            const container = document.getElementById("notification-container");
+            const notif = document.createElement("div");
+            const colors = {
+              info: "border-primary bg-surface-container-lowest",
+              success: "border-secondary bg-secondary-container/30",
+              warning: "border-tertiary bg-tertiary-container/30",
+              error: "border-error bg-error-container/20",
+            };
+
+            notif.className = `${colors[type]} border-2 p-4 rounded-xl shadow-lg max-w-sm animate-fade-in flex items-start gap-3`;
+            notif.innerHTML = `
+              <span class="material-symbols-outlined ${type === "error" ? "text-error" : type === "success" ? "text-secondary" : "text-primary"}">
+                ${type === "success" ? "check_circle" : type === "error" ? "error" : "info"}
+              </span>
+              <div>
+                <div class="font-bold text-sm">${title}</div>
+                <div class="text-xs text-on-surface-variant mt-1">${message}</div>
+              </div>
+            `;
+
+            container.appendChild(notif);
+            setTimeout(() => {
+              notif.style.opacity = "0";
+              notif.style.transform = "translateX(100%)";
+              setTimeout(() => notif.remove(), 300);
+            }, 4000);
+          },
+        };
+
+        // Proses data CSV dan kelompokkan berdasarkan tahap
+        const processStageData = () => {
+          const stageStats = {
+            R3: {
+              count: 0,
+              totalWater: 0,
+              totalKs: 0,
+              totalIrrigation: 0,
+              data: [],
+            },
+            R8: {
+              count: 0,
+              totalWater: 0,
+              totalKs: 0,
+              totalIrrigation: 0,
+              data: [],
+            },
+            R9: {
+              count: 0,
+              totalWater: 0,
+              totalKs: 0,
+              totalIrrigation: 0,
+              data: [],
+            },
+            other: {
+              count: 0,
+              totalWater: 0,
+              totalKs: 0,
+              totalIrrigation: 0,
+              data: [],
+            },
+          };
+
+          state.data.forEach((row) => {
+            const stage = row.growth_stage?.toString().trim();
+            if (!stage) return;
+
+            // Map tahap ke kategori
+            let category = stageMapping[stage] || "other";
+
+            // Kelompokkan R1-R7 ke R3 (Early Flowering)
+            if (["R1", "R2", "R3", "R4", "R5", "R6", "R7"].includes(category)) {
+              category = "R3";
+            }
+
+            const water = parseFloat(row.water_use) || 0;
+            const ks = parseFloat(row.water_stress_coefficient) || 0;
+            const irrigation = parseFloat(row.irrigation) || 0;
+
+            if (stageStats[category]) {
+              stageStats[category].count++;
+              stageStats[category].totalWater += water;
+              stageStats[category].totalKs += ks;
+              stageStats[category].totalIrrigation += irrigation;
+              stageStats[category].data.push({ ...row, mappedStage: category });
+            } else {
+              stageStats.other.count++;
+              stageStats.other.totalWater += water;
+              stageStats.other.totalKs += ks;
+              stageStats.other.totalIrrigation += irrigation;
+              stageStats.other.data.push({ ...row, mappedStage: "other" });
+            }
+          });
+
+          return stageStats;
+        };
+
+        const updateStageCards = (stats) => {
+          const maxWater = Math.max(
+            stats.R3.count > 0 ? stats.R3.totalWater / stats.R3.count : 0,
+            stats.R8.count > 0 ? stats.R8.totalWater / stats.R8.count : 0,
+            stats.R9.count > 0 ? stats.R9.totalWater / stats.R9.count : 0,
+            1,
+          );
+
+          // Update R3
+          if (stats.R3.count > 0) {
+            const avgWater = stats.R3.totalWater / stats.R3.count;
+            const avgKs = stats.R3.totalKs / stats.R3.count;
+            document.getElementById("r3-count").textContent =
+              stats.R3.count + " hari";
+            document.getElementById("r3-water").textContent =
+              utils.formatNumber(avgWater, 2) + " m³";
+            document.getElementById("r3-ks").textContent = utils.formatNumber(
+              avgKs,
+              2,
+            );
+            document.getElementById("r3-bar").style.width =
+              (avgWater / maxWater) * 100 + "%";
+          }
+
+          // Update R8
+          if (stats.R8.count > 0) {
+            const avgWater = stats.R8.totalWater / stats.R8.count;
+            const avgKs = stats.R8.totalKs / stats.R8.count;
+            document.getElementById("r8-count").textContent =
+              stats.R8.count + " hari";
+            document.getElementById("r8-water").textContent =
+              utils.formatNumber(avgWater, 2) + " m³";
+            document.getElementById("r8-ks").textContent = utils.formatNumber(
+              avgKs,
+              2,
+            );
+            document.getElementById("r8-bar").style.width =
+              (avgWater / maxWater) * 100 + "%";
+          }
+
+          // Update R9
+          if (stats.R9.count > 0) {
+            const avgWater = stats.R9.totalWater / stats.R9.count;
+            const avgKs = stats.R9.totalKs / stats.R9.count;
+            document.getElementById("r9-count").textContent =
+              stats.R9.count + " hari";
+            document.getElementById("r9-water").textContent =
+              utils.formatNumber(avgWater, 2) + " m³";
+            document.getElementById("r9-ks").textContent = utils.formatNumber(
+              avgKs,
+              2,
+            );
+            document.getElementById("r9-bar").style.width =
+              (avgWater / maxWater) * 100 + "%";
+          }
+        };
+
+        window.filterByStage = (stage) => {
+          state.currentFilter = stage;
+
+          // Update UI cards
+          document.querySelectorAll(".stage-card").forEach((card) => {
+            if (stage === "all") {
+              card.classList.remove("active", "filtered-out");
+            } else {
+              if (card.dataset.stage === stage) {
+                card.classList.add("active");
+                card.classList.remove("filtered-out");
+              } else {
+                card.classList.remove("active");
+                card.classList.add("filtered-out");
+              }
+            }
+          });
+
+          // Update dropdown
+          document.getElementById("stage-filter").value = stage;
+
+          // Update badge
+          const badge = document.getElementById("filter-badge");
+          const badgeText = document.getElementById("filter-text");
+          const resetBtn = document.getElementById("reset-filter-btn");
+
+          if (stage !== "all") {
+            badge.classList.remove("hidden");
+            badge.classList.add("flex");
+            badgeText.textContent =
+              stage === "R3"
+                ? "R3 - Pembungaan Awal"
+                : stage === "R8"
+                  ? "R8 - Pematangan"
+                  : "R9 - Kematangan Penuh";
+            resetBtn.classList.remove("hidden");
+          } else {
+            badge.classList.add("hidden");
+            badge.classList.remove("flex");
+            resetBtn.classList.add("hidden");
+          }
+
+          // Update tabel
+          renderDataTable();
+
+          // Update chart
+          updateChartsForFilter(stage);
+
+          // Update text
+          const showingText = document.getElementById("showing-text");
+          if (stage === "all") {
+            showingText.textContent = "Menampilkan semua data";
+          } else {
+            const stats = processStageData();
+            const count = stats[stage]?.count || 0;
+            showingText.textContent = `Menampilkan ${count} data untuk tahap ${stage}`;
+          }
+
+          if (stage !== "all") {
+            utils.showNotification(
+              "Filter Diterapkan",
+              `Menampilkan data untuk tahap ${stage}`,
+              "success",
+            );
+          }
+        };
+
+        document
+          .getElementById("reset-filter-btn")
+          ?.addEventListener("click", () => {
+            window.filterByStage("all");
+          });
+
+        const renderDataTable = () => {
+          const tbody = document.getElementById("csv-data-table");
+          const stats = processStageData();
+
+          let dataToShow = [];
+
+          if (state.currentFilter === "all") {
+            // Tampilkan semua data yang termasuk R3, R8, R9
+            dataToShow = [...stats.R3.data, ...stats.R8.data, ...stats.R9.data];
+          } else {
+            dataToShow = stats[state.currentFilter]?.data || [];
+          }
+
+          // Sort by date
+          dataToShow.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+          document.getElementById("total-rows").textContent =
+            dataToShow.length + " baris";
+
+          if (dataToShow.length === 0) {
+            tbody.innerHTML = `
+              <tr>
+                <td colspan="7" class="py-8 text-center text-on-surface-variant">
+                  Tidak ada data untuk tahap ini
+                </td>
+              </tr>
+            `;
+            return;
+          }
+
+          tbody.innerHTML = dataToShow
+            .map((row) => {
+              const ks = parseFloat(row.water_stress_coefficient) || 0;
+              const status =
+                ks >= 0.85 ? "Optimal" : ks >= 0.65 ? "Sedang" : "Stres";
+              const statusColor =
+                ks >= 0.85
+                  ? "text-secondary"
+                  : ks >= 0.65
+                    ? "text-tertiary"
+                    : "text-error";
+              const stageClass =
+                row.mappedStage === "R3"
+                  ? "bg-tertiary-container/30 text-tertiary"
+                  : row.mappedStage === "R8"
+                    ? "bg-secondary-container/30 text-secondary"
+                    : "bg-primary-container/30 text-primary";
+
+              return `
+              <tr class="data-row border-b border-outline-variant/10 hover:bg-surface-container/50 transition-colors">
+                <td class="py-3 px-4">${utils.formatDate(row.date)}</td>
+                <td class="py-3 px-4">
+                  <span class="px-2 py-1 rounded-full text-xs font-semibold ${stageClass}">
+                    ${row.growth_stage} → ${row.mappedStage}
+                  </span>
+                </td>
+                <td class="py-3 px-4 text-right">${utils.formatNumber(row.precipitation, 1)}</td>
+                <td class="py-3 px-4 text-right">${utils.formatNumber(row.irrigation, 1)}</td>
+                <td class="py-3 px-4 text-right font-bold">${utils.formatNumber(row.water_use, 2)}</td>
+                <td class="py-3 px-4 text-right font-bold">${utils.formatNumber(ks, 2)}</td>
+                <td class="py-3 px-4 text-right">
+                  <span class="font-bold ${statusColor}">${status}</span>
+                </td>
+              </tr>
+            `;
+            })
+            .join("");
+        };
+
+        const charts = {
+          init: () => {
+            charts.renderDistributionChart();
+            charts.renderWaterProfileChart();
+          },
+
+          renderDistributionChart: () => {
+            const ctx = document
+              .getElementById("stageDistributionChart")
+              .getContext("2d");
+            const stats = processStageData();
+
+            if (state.chartInstances.distribution) {
+              state.chartInstances.distribution.destroy();
+            }
+
+            state.chartInstances.distribution = new Chart(ctx, {
+              type: "doughnut",
+              data: {
+                labels: [
+                  "R3 - Pembungaan Awal",
+                  "R8 - Pematangan",
+                  "R9 - Kematangan Penuh",
+                ],
+                datasets: [
+                  {
+                    data: [stats.R3.count, stats.R8.count, stats.R9.count],
+                    backgroundColor: ["#8c591c", "#536d22", "#746414"],
+                    borderWidth: 0,
+                  },
+                ],
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                  legend: {
+                    position: "bottom",
+                    labels: {
+                      padding: 20,
+                      usePointStyle: true,
+                      font: { family: "Be Vietnam Pro", size: 12 },
+                    },
+                  },
+                },
+              },
+            });
+          },
+
+          renderWaterProfileChart: () => {
+            const ctx = document
+              .getElementById("waterProfileChart")
+              .getContext("2d");
+            const stats = processStageData();
+
+            const r3Avg =
+              stats.R3.count > 0 ? stats.R3.totalWater / stats.R3.count : 0;
+            const r8Avg =
+              stats.R8.count > 0 ? stats.R8.totalWater / stats.R8.count : 0;
+            const r9Avg =
+              stats.R9.count > 0 ? stats.R9.totalWater / stats.R9.count : 0;
+
+            if (state.chartInstances.waterProfile) {
+              state.chartInstances.waterProfile.destroy();
+            }
+
+            state.chartInstances.waterProfile = new Chart(ctx, {
+              type: "bar",
+              data: {
+                labels: ["R3\nPembungaan", "R8\nPematangan", "R9\nKematangan"],
+                datasets: [
+                  {
+                    label: "Rata-rata Konsumsi Air (m³)",
+                    data: [r3Avg, r8Avg, r9Avg],
+                    backgroundColor: ["#fcb973", "#ceee93", "#fce589"],
+                    borderRadius: 8,
+                  },
+                ],
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                  legend: { display: false },
+                },
+                scales: {
+                  y: {
+                    beginAtZero: true,
+                    title: { display: true, text: "m³ per hari" },
+                  },
+                },
+              },
+            });
+          },
+        };
+
+        window.updateChartsForFilter = (stage) => {
+          // Chart distribusi tetap sama, tapi water profile bisa diupdate
+          if (stage !== "all") {
+            const stats = processStageData();
+            const ctx = document
+              .getElementById("waterProfileChart")
+              .getContext("2d");
+
+            if (state.chartInstances.waterProfile) {
+              state.chartInstances.waterProfile.destroy();
+            }
+
+            // Jika filter aktif, highlight bar yang dipilih
+            const r3Avg =
+              stats.R3.count > 0 ? stats.R3.totalWater / stats.R3.count : 0;
+            const r8Avg =
+              stats.R8.count > 0 ? stats.R8.totalWater / stats.R8.count : 0;
+            const r9Avg =
+              stats.R9.count > 0 ? stats.R9.totalWater / stats.R9.count : 0;
+
+            const bgColors =
+              stage === "R3"
+                ? ["#8c591c", "#e9e9de", "#e9e9de"]
+                : stage === "R8"
+                  ? ["#e9e9de", "#536d22", "#e9e9de"]
+                  : ["#e9e9de", "#e9e9de", "#746414"];
+
+            state.chartInstances.waterProfile = new Chart(ctx, {
+              type: "bar",
+              data: {
+                labels: ["R3\nPembungaan", "R8\nPematangan", "R9\nKematangan"],
+                datasets: [
+                  {
+                    label: "Rata-rata Konsumsi Air (m³)",
+                    data: [r3Avg, r8Avg, r9Avg],
+                    backgroundColor: bgColors,
+                    borderRadius: 8,
+                  },
+                ],
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                  legend: { display: false },
+                },
+                scales: {
+                  y: {
+                    beginAtZero: true,
+                    title: { display: true, text: "m³ per hari" },
+                  },
+                },
+              },
+            });
+          } else {
+            charts.renderWaterProfileChart();
+          }
+        };
+
+        const updateTimeline = () => {
+          const container = document.getElementById("timeline-container");
+
+          const timelineData = [
+            {
+              stage: "V1-V4",
+              title: "Fase Vegetatif Awal",
+              desc: "Pertumbuhan daun dan batang",
+              icon: "eco",
+            },
+            {
+              stage: "V5-V12",
+              title: "Fase Vegetatif Akhir",
+              desc: "Pembentukan kepala bunga",
+              icon: "yard",
+            },
+            {
+              stage: "R1-R3",
+              title: "Fase Reproduktif Awal",
+              desc: "Pembungaan dan pembuahan",
+              icon: "local_florist",
+            },
+            {
+              stage: "R4-R7",
+              title: "Fase Pengisian Biji",
+              desc: "Pengembangan dan pengisian biji",
+              icon: "grain",
+            },
+            {
+              stage: "R8",
+              title: "Fase Pematangan",
+              desc: "Pengerasan dan pewarnaan biji",
+              icon: "opacity",
+            },
+            {
+              stage: "R9",
+              title: "Fase Panen",
+              desc: "Kematangan penuh, siap panen",
+              icon: "check_circle",
+            },
+          ];
+
+          container.innerHTML = timelineData
+            .map(
+              (item, index) => `
+            <div class="flex items-start gap-4 relative">
+              <div class="w-16 h-16 rounded-2xl bg-primary-container flex items-center justify-center text-primary z-10 shrink-0">
+                <span class="material-symbols-outlined text-2xl">${item.icon}</span>
+              </div>
+              <div class="flex-1 bg-surface-container-lowest p-4 rounded-xl">
+                <div class="flex justify-between items-start mb-2">
+                  <h4 class="font-bold">${item.title}</h4>
+                  <span class="text-xs font-bold text-primary bg-primary-container/30 px-2 py-1 rounded-full">${item.stage}</span>
+                </div>
+                <p class="text-sm text-on-surface-variant">${item.desc}</p>
+              </div>
+            </div>
+          `,
+            )
+            .join("");
+        };
+
+        const init = () => {
+          console.log("🌱 Memulai Analisis Tahap Pertumbuhan...");
+
+          const initialState = SunflowerData.init();
+          state.data = initialState.data;
+
+          console.log(`📊 Data loaded: ${state.data.length} baris`);
+
+          const statusBadge = document.getElementById("data-status");
+          if (initialState.isRealData) {
+            statusBadge.textContent = initialState.sourceFile;
+            statusBadge.className =
+              "px-3 py-1 bg-primary-container text-on-primary-container text-xs font-bold rounded-full";
+          }
+
+          if (state.darkMode) {
+            document.documentElement.classList.add("dark");
+          }
+
+          document
+            .getElementById("theme-toggle")
+            ?.addEventListener("click", () => {
+              state.darkMode = !state.darkMode;
+              localStorage.setItem("darkMode", state.darkMode);
+              document.documentElement.classList.toggle("dark", state.darkMode);
+            });
+
+          window.addEventListener("sunflower-data-updated", (e) => {
+            state.data = SunflowerData.getData();
+            updateAll();
+            utils.showNotification(
+              "Data Diperbarui",
+              "Data tahap pertumbuhan telah diupdate",
+              "success",
+            );
+          });
+
+          setTimeout(() => {
+            updateAll();
+            console.log("✅ Growth Stage Analysis ready");
+          }, 100);
+        };
+
+        const updateAll = () => {
+          const stats = processStageData();
+          updateStageCards(stats);
+          charts.init();
+          renderDataTable();
+          updateTimeline();
+        };
+
+        return { init };
+      })();
+
+      document.addEventListener("DOMContentLoaded", function () {
+        if (typeof GrowthStageApp !== "undefined") {
+          GrowthStageApp.init();
+        }
+      });
+
+      if (
+        document.readyState === "complete" ||
+        document.readyState === "interactive"
+      ) {
+        setTimeout(function () {
+          if (
+            typeof GrowthStageApp !== "undefined" &&
+            !window.growthStageInitialized
+          ) {
+            window.growthStageInitialized = true;
+            GrowthStageApp.init();
+          }
+        }, 1);
+      }
+    </script>
+  </body>
+</html>

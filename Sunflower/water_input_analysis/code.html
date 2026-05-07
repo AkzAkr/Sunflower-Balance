@@ -1,0 +1,1569 @@
+<!doctype html>
+<html class="light" lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Sunflower Balance - Input Air</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script src="../shared-data.js"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&amp;family=Be+Vietnam+Pro:wght@300;400;500;600&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary-dim": "#675706",
+              "surface-container-highest": "#e9e9de",
+              "secondary-dim": "#476016",
+              tertiary: "#8c591c",
+              "on-secondary-fixed": "#304600",
+              "on-primary-fixed-variant": "#6c5c0c",
+              "on-primary-fixed": "#4d4000",
+              "tertiary-dim": "#7e4d10",
+              "secondary-fixed": "#ceee93",
+              "on-surface": "#383833",
+              "tertiary-fixed-dim": "#edac67",
+              outline: "#81817a",
+              "on-tertiary-fixed": "#432500",
+              "surface-container-high": "#efeee5",
+              "outline-variant": "#bab9b2",
+              "on-tertiary-container": "#5f3700",
+              "on-error-container": "#520c00",
+              background: "#fefcf4",
+              error: "#be2d06",
+              "secondary-fixed-dim": "#c0df86",
+              "surface-variant": "#e9e9de",
+              "on-tertiary": "#ffffff",
+              secondary: "#536d22",
+              primary: "#746414",
+              "inverse-on-surface": "#9e9d96",
+              "tertiary-container": "#fcb973",
+              "inverse-primary": "#fce589",
+              surface: "#fefcf4",
+              "on-primary-container": "#625300",
+              "on-secondary-container": "#41590f",
+              "primary-container": "#fce589",
+              "tertiary-fixed": "#fcb973",
+              "on-secondary": "#ffffff",
+              "surface-container-low": "#fbf9f1",
+              "surface-container": "#f5f4eb",
+              "error-container": "#f95630",
+              "primary-fixed-dim": "#edd77d",
+              "surface-tint": "#746414",
+              "on-surface-variant": "#65655f",
+              "on-background": "#383833",
+              "surface-bright": "#fefcf4",
+              "on-error": "#ffffff",
+              "surface-container-lowest": "#ffffff",
+              "surface-dim": "#e4e3d8",
+              "on-secondary-fixed-variant": "#4a6319",
+              "secondary-container": "#ceee93",
+              "on-primary": "#ffffff",
+              "inverse-surface": "#0e0f0a",
+              "error-dim": "#b92902",
+              "on-tertiary-fixed-variant": "#6c3e00",
+            },
+            borderRadius: {
+              DEFAULT: "1rem",
+              lg: "2rem",
+              xl: "3rem",
+              full: "9999px",
+            },
+            fontFamily: {
+              headline: ["Plus Jakarta Sans"],
+              body: ["Be Vietnam Pro"],
+              label: ["Be Vietnam Pro"],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      body {
+        font-family: "Be Vietnam Pro", sans-serif;
+      }
+      h1,
+      h2,
+      h3 {
+        font-family: "Plus Jakarta Sans", sans-serif;
+      }
+      .material-symbols-outlined {
+        font-variation-settings:
+          "FILL" 0,
+          "wght" 400,
+          "GRAD" 0,
+          "opsz" 24;
+      }
+      .water-bar {
+        transition: height 0.5s ease;
+      }
+      .water-bar:hover {
+        filter: brightness(1.1);
+      }
+      @keyframes pulse-ring {
+        0% {
+          transform: scale(0.95);
+          box-shadow: 0 0 0 0 rgba(116, 100, 20, 0.7);
+        }
+        70% {
+          transform: scale(1);
+          box-shadow: 0 0 0 10px rgba(116, 100, 20, 0);
+        }
+        100% {
+          transform: scale(0.95);
+          box-shadow: 0 0 0 0 rgba(116, 100, 20, 0);
+        }
+      }
+      .live-indicator {
+        animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+      }
+      .animate-fade-in {
+        animation: fadeIn 0.5s ease-out;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .event-card {
+        transition: all 0.3s ease;
+      }
+      .event-card:hover {
+        transform: translateX(4px);
+      }
+      canvas {
+        width: 100% !important;
+        height: 100% !important;
+      }
+      .filter-select {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2365655f'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 0.5rem center;
+        background-size: 1.5em;
+      }
+    </style>
+  </head>
+  <body class="bg-surface text-on-surface">
+    <!-- Notification Container -->
+    <div
+      id="notification-container"
+      class="fixed top-4 right-4 z-[9999] space-y-2"
+    ></div>
+
+    <!-- SideNavBar -->
+    <aside
+      class="h-screen w-64 fixed left-0 top-0 border-r-0 bg-stone-50 dark:bg-stone-950 flex flex-col p-4 gap-2 z-50"
+    >
+      <div class="mb-8 px-4">
+        <h1 class="text-xl font-bold text-yellow-800 dark:text-yellow-200">
+          Sunflower Balance
+        </h1>
+        <p class="text-xs text-on-surface-variant">Presisi Hidrasi</p>
+      </div>
+      <nav class="flex flex-col gap-2">
+        <a
+          class="flex items-center gap-3 px-4 py-3 text-stone-600 dark:text-stone-400 hover:bg-stone-200/50 dark:hover:bg-stone-800/50 rounded-2xl transition-colors"
+          href="/dashboard_overview/code.html"
+        >
+          <span class="material-symbols-outlined">dashboard</span>
+          <span class="font-medium">Dasbor</span>
+        </a>
+        <a
+          class="flex items-center gap-3 px-4 py-3 bg-yellow-100 dark:bg-yellow-900/40 text-yellow-900 dark:text-yellow-100 rounded-2xl font-semibold scale-[0.98] transition-transform"
+          href="/water_input_analysis/code.html"
+        >
+          <span class="material-symbols-outlined">water_drop</span>
+          <span class="font-medium">Input Air</span>
+        </a>
+        <a
+          class="flex items-center gap-3 px-4 py-3 text-stone-600 dark:text-stone-400 hover:bg-stone-200/50 dark:hover:bg-stone-800/50 rounded-2xl transition-colors"
+          href="/plant_response_analysis/code.html"
+        >
+          <span class="material-symbols-outlined">local_florist</span>
+          <span class="font-medium">Respon Tanaman</span>
+        </a>
+        <a
+          class="flex items-center gap-3 px-4 py-3 text-stone-600 dark:text-stone-400 hover:bg-stone-200/50 dark:hover:bg-stone-800/50 rounded-2xl transition-colors"
+          href="/stress_analysis/code.html"
+        >
+          <span class="material-symbols-outlined">warning</span>
+          <span class="font-medium">Analisis Stres</span>
+        </a>
+        <a
+          class="flex items-center gap-3 px-4 py-3 text-stone-600 dark:text-stone-400 hover:bg-stone-200/50 dark:hover:bg-stone-800/50 rounded-2xl transition-colors"
+          href="/growth_stage_analysis/code.html"
+        >
+          <span class="material-symbols-outlined">timeline</span>
+          <span class="font-medium">Tahap Pertumbuhan</span>
+        </a>
+        <a
+          class="flex items-center gap-3 px-4 py-3 text-stone-600 dark:text-stone-400 hover:bg-stone-200/50 dark:hover:bg-stone-800/50 rounded-2xl transition-colors"
+          href="/insights_summary/code.html"
+        >
+          <span class="material-symbols-outlined">query_stats</span>
+          <span class="font-medium">Wawasan</span>
+        </a>
+      </nav>
+      <div
+        class="mt-auto p-4 bg-surface-container-low rounded-lg flex items-center gap-3"
+      >
+        <img
+          class="w-10 h-10 rounded-full object-cover"
+          src="https://ui-avatars.com/api/?name=Anang&background=FACC15&color=473C08&bold=true"
+          alt="Dr. Elena Thorne"
+        />
+        <div>
+          <p class="text-sm font-semibold"></p>
+          Anang Ismail
+          <p class="text-xs text-on-surface-variant">Penyuka Bunga Matahari</p>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="ml-64 min-h-screen">
+      <!-- TopAppBar -->
+      <header
+        class="sticky top-0 z-40 w-full bg-stone-50/80 dark:bg-stone-950/80 backdrop-blur-xl flex justify-between items-center px-8 py-4"
+      >
+        <h2 class="text-2xl font-bold text-on-surface">Input Air</h2>
+        <div class="flex items-center gap-6">
+          <!-- Filter Controls -->
+          <div
+            class="flex items-center gap-3 bg-surface-container-low px-4 py-2 rounded-xl"
+          >
+            <span
+              class="material-symbols-outlined text-sm text-on-surface-variant"
+              >filter_list</span
+            >
+            <select
+              id="filter-year"
+              class="filter-select bg-transparent text-sm font-medium px-2 py-1 pr-8 rounded-lg border border-outline-variant/30 focus:outline-none focus:ring-2 focus:ring-primary"
+            >
+              <option value="all">Semua Tahun</option>
+            </select>
+            <select
+              id="filter-month"
+              class="filter-select bg-transparent text-sm font-medium px-2 py-1 pr-8 rounded-lg border border-outline-variant/30 focus:outline-none focus:ring-2 focus:ring-primary"
+            >
+              <option value="all">Semua Bulan</option>
+              <option value="0">Januari</option>
+              <option value="1">Februari</option>
+              <option value="2">Maret</option>
+              <option value="3">April</option>
+              <option value="4">Mei</option>
+              <option value="5">Juni</option>
+              <option value="6">Juli</option>
+              <option value="7">Agustus</option>
+              <option value="8">September</option>
+              <option value="9">Oktober</option>
+              <option value="10">November</option>
+              <option value="11">Desember</option>
+            </select>
+            <button
+              id="reset-filter"
+              class="text-xs font-bold text-primary hover:underline px-2"
+            >
+              Reset
+            </button>
+          </div>
+          <div class="flex gap-4">
+            <button
+              id="view-monthly"
+              class="text-stone-500 dark:text-stone-400 flex items-center gap-2 hover:opacity-80 transition-opacity"
+            >
+              <span class="material-symbols-outlined text-sm"
+                >calendar_view_month</span
+              >
+              <span class="text-sm font-medium">Bulanan</span>
+            </button>
+            <button
+              id="view-weekly"
+              class="text-yellow-800 dark:text-yellow-200 font-bold border-b-2 border-yellow-500 flex items-center gap-2"
+            >
+              <span class="material-symbols-outlined text-sm"
+                >calendar_view_week</span
+              >
+              <span class="text-sm font-medium">Mingguan</span>
+            </button>
+          </div>
+          <div class="flex gap-3">
+            <button
+              id="export-csv-btn"
+              class="p-2 text-stone-500 hover:bg-stone-200/50 rounded-full transition-all"
+              title="Ekspor CSV"
+            >
+              <span class="material-symbols-outlined">download</span>
+            </button>
+            <button
+              id="export-json-btn"
+              class="p-2 text-stone-500 hover:bg-stone-200/50 rounded-full transition-all"
+              title="Ekspor JSON"
+            >
+              <span class="material-symbols-outlined">code</span>
+            </button>
+            <button
+              id="toggle-chart-btn"
+              class="p-2 text-stone-500 hover:bg-stone-200/50 rounded-full transition-all"
+              title="Alihkan Grafik"
+            >
+              <span class="material-symbols-outlined">bar_chart</span>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <!-- Page Content -->
+      <div class="p-8 space-y-8">
+        <!-- Hero Section -->
+        <section
+          class="bg-surface-container-low rounded-xl p-8 flex flex-col md:flex-row items-center justify-between gap-8"
+        >
+          <div class="space-y-4 max-w-xl">
+            <span
+              class="px-4 py-1 bg-secondary-container text-on-secondary-container rounded-full text-xs font-bold uppercase tracking-wider"
+            >
+              Keseimbangan Air
+            </span>
+            <h1
+              class="text-4xl font-extrabold text-on-background leading-tight"
+            >
+              Total Input Air
+            </h1>
+            <p class="text-on-surface-variant text-lg leading-relaxed">
+              Kombinasi curah hujan dan irigasi untuk periode yang dipilih.
+            </p>
+            <div class="flex items-baseline gap-2">
+              <span
+                id="total-input"
+                class="text-6xl font-extrabold text-primary"
+                >0.0</span
+              >
+              <span class="text-xl text-on-surface-variant">mm</span>
+            </div>
+            <!-- Progress bar untuk saturasi -->
+            <div
+              class="w-full max-w-xs bg-surface-container-highest rounded-full h-3 overflow-hidden mt-2"
+            >
+              <div
+                id="saturation-bar"
+                class="h-full bg-primary rounded-full transition-all duration-500"
+                style="width: 0%"
+              ></div>
+            </div>
+            <p class="text-xs text-on-surface-variant">
+              Saturasi tanah: <span id="saturation-text">0%</span>
+            </p>
+            <p
+              id="period-info"
+              class="text-sm text-on-surface-variant font-medium"
+            >
+              Periode: -
+            </p>
+          </div>
+          <div class="relative w-64 h-64 flex items-center justify-center">
+            <svg class="w-full h-full transform -rotate-90">
+              <circle
+                class="text-surface-container-highest"
+                cx="128"
+                cy="128"
+                fill="transparent"
+                r="110"
+                stroke="currentColor"
+                stroke-width="24"
+              ></circle>
+              <circle
+                class="text-primary progress-ring"
+                cx="128"
+                cy="128"
+                fill="transparent"
+                r="110"
+                stroke="currentColor"
+                stroke-dasharray="691"
+                stroke-dashoffset="691"
+                stroke-width="24"
+                style="stroke-linecap: round"
+              ></circle>
+            </svg>
+            <div
+              class="absolute inset-0 flex flex-col items-center justify-center text-center"
+            >
+              <span
+                id="saturation-circle-text"
+                class="text-4xl font-extrabold text-primary"
+                >0%</span
+              >
+              <span
+                class="text-[10px] font-bold text-on-surface-variant uppercase tracking-[0.2em]"
+                >Saturasi</span
+              >
+            </div>
+          </div>
+        </section>
+
+        <!-- Weekly/Monthly Water Input Chart -->
+        <section class="bg-surface-container-lowest rounded-xl p-8 shadow-sm">
+          <div class="flex justify-between items-center mb-8">
+            <div>
+              <h3 class="text-xl font-bold" id="chart-title">
+                Input Air Mingguan
+              </h3>
+              <p class="text-sm text-on-surface-variant">
+                Hujan vs Irigasi (mm)
+              </p>
+            </div>
+            <div class="flex gap-2">
+              <span
+                class="flex items-center gap-1.5 text-xs font-bold text-secondary"
+              >
+                <span class="w-3 h-3 rounded-full bg-secondary"></span>
+                Hujan
+              </span>
+              <span
+                class="flex items-center gap-1.5 text-xs font-bold text-tertiary"
+              >
+                <span class="w-3 h-3 rounded-full bg-tertiary"></span>
+                Irigasi
+              </span>
+            </div>
+          </div>
+          <div
+            class="h-64 flex items-end justify-between gap-2 px-4"
+            id="weekly-bars"
+          >
+            <!-- Generated by JS -->
+          </div>
+        </section>
+
+        <!-- Two Column Layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <!-- Event Log -->
+          <section class="bg-surface-container-low rounded-xl p-8">
+            <div class="flex justify-between items-center mb-6">
+              <div>
+                <h3 class="text-xl font-bold">Log Input</h3>
+                <p class="text-sm text-on-surface-variant">
+                  Kejadian irigasi dan curah hujan terbaru
+                </p>
+              </div>
+              <button
+                id="add-event-btn"
+                class="bg-primary text-on-primary px-4 py-2 rounded-lg font-bold text-sm hover:opacity-90 transition-opacity flex items-center gap-2"
+              >
+                <span class="material-symbols-outlined text-sm">add</span>
+                Tambah Kejadian
+              </button>
+            </div>
+            <div class="space-y-3" id="event-log">
+              <!-- Generated by JS -->
+            </div>
+            <button
+              id="view-all-btn"
+              class="mt-4 w-full py-3 bg-surface-container-high rounded-lg font-bold text-sm hover:bg-surface-container transition-colors"
+            >
+              Lihat Semua Kejadian
+            </button>
+          </section>
+
+          <!-- Zone Map -->
+          <section class="bg-surface-container-low rounded-xl p-8">
+            <div class="flex justify-between items-center mb-6">
+              <div>
+                <h3 class="text-xl font-bold">Distribusi Zona</h3>
+                <p class="text-sm text-on-surface-variant">
+                  Input air di seluruh zona ladang
+                </p>
+              </div>
+              <button
+                id="expand-map-btn"
+                class="p-2 text-stone-500 hover:bg-stone-200/50 rounded-full transition-all"
+              >
+                <span class="material-symbols-outlined">fullscreen</span>
+              </button>
+            </div>
+            <div
+              class="relative h-64 bg-surface-container-high rounded-lg overflow-hidden"
+            >
+              <canvas id="zone-map"></canvas>
+              <div class="absolute bottom-4 right-4 flex gap-2">
+                <span
+                  class="px-2 py-1 bg-primary/80 text-white text-xs font-bold rounded"
+                  id="zone-a-label"
+                  >Zona A: 0mm</span
+                >
+                <span
+                  class="px-2 py-1 bg-secondary/80 text-white text-xs font-bold rounded"
+                  id="zone-b-label"
+                  >Zona B: 0mm</span
+                >
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <!-- Line Charts -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <section class="bg-surface-container-low rounded-xl p-8">
+            <h3 class="text-xl font-bold mb-4">Tren Curah Hujan</h3>
+            <div class="h-48">
+              <canvas id="precipChart"></canvas>
+            </div>
+          </section>
+          <section class="bg-surface-container-low rounded-xl p-8">
+            <h3 class="text-xl font-bold mb-4">Tren Irigasi</h3>
+            <div class="h-48">
+              <canvas id="irrigationChart"></canvas>
+            </div>
+          </section>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div class="bg-surface-container-low rounded-xl p-6">
+            <div class="flex items-center gap-3 mb-2">
+              <span class="material-symbols-outlined text-secondary"
+                >water_drop</span
+              >
+              <span class="text-sm font-medium text-on-surface-variant"
+                >Total Hujan</span
+              >
+            </div>
+            <p
+              id="stat-total-rain"
+              class="text-2xl font-extrabold text-secondary"
+            >
+              0 mm
+            </p>
+          </div>
+          <div class="bg-surface-container-low rounded-xl p-6">
+            <div class="flex items-center gap-3 mb-2">
+              <span class="material-symbols-outlined text-tertiary"
+                >sprinkler</span
+              >
+              <span class="text-sm font-medium text-on-surface-variant"
+                >Total Irigasi</span
+              >
+            </div>
+            <p
+              id="stat-total-irrigation"
+              class="text-2xl font-extrabold text-tertiary"
+            >
+              0 mm
+            </p>
+          </div>
+          <div class="bg-surface-container-low rounded-xl p-6">
+            <div class="flex items-center gap-3 mb-2">
+              <span class="material-symbols-outlined text-primary"
+                >calendar_today</span
+              >
+              <span class="text-sm font-medium text-on-surface-variant"
+                >Jumlah Hari</span
+              >
+            </div>
+            <p
+              id="stat-total-days"
+              class="text-2xl font-extrabold text-primary"
+            >
+              0
+            </p>
+          </div>
+          <div class="bg-surface-container-low rounded-xl p-6">
+            <div class="flex items-center gap-3 mb-2">
+              <span class="material-symbols-outlined text-error"
+                >trending_up</span
+              >
+              <span class="text-sm font-medium text-on-surface-variant"
+                >Rata-rata Harian</span
+              >
+            </div>
+            <p id="stat-avg-daily" class="text-2xl font-extrabold text-error">
+              0 mm
+            </p>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Add Event Modal -->
+    <div
+      id="add-modal"
+      class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] hidden flex items-center justify-center"
+    >
+      <div
+        class="bg-surface-container-lowest p-6 rounded-2xl shadow-2xl max-w-md w-full mx-4 animate-fade-in"
+      >
+        <h3 class="text-xl font-bold mb-4">Tambah Kejadian Input Air</h3>
+        <form id="add-form" class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium mb-2">Jenis Kejadian</label>
+            <div class="flex gap-2">
+              <button
+                type="button"
+                class="event-type-btn flex-1 py-3 bg-primary-container text-on-primary-container rounded-lg font-bold text-sm transition-colors"
+                data-type="irrigation"
+              >
+                Irigasi
+              </button>
+              <button
+                type="button"
+                class="event-type-btn flex-1 py-3 bg-surface-container text-on-surface-variant rounded-lg font-bold text-sm transition-colors"
+                data-type="rain"
+              >
+                Hujan
+              </button>
+            </div>
+            <input type="hidden" id="event-type" value="irrigation" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-2">Jumlah (mm)</label>
+            <input
+              type="number"
+              id="event-amount"
+              step="0.1"
+              class="w-full p-3 bg-surface-container rounded-lg border-none ring-1 ring-outline-variant/30"
+              placeholder="Masukkan jumlah..."
+              required
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-2"
+              >Tanggal & Waktu</label
+            >
+            <input
+              type="datetime-local"
+              id="event-datetime"
+              class="w-full p-3 bg-surface-container rounded-lg border-none ring-1 ring-outline-variant/30"
+              required
+            />
+          </div>
+          <div class="flex gap-3">
+            <button
+              type="submit"
+              class="flex-1 py-3 bg-primary text-on-primary rounded-lg font-bold hover:opacity-90 transition-opacity"
+            >
+              Tambah Kejadian
+            </button>
+            <button
+              type="button"
+              id="cancel-add"
+              class="flex-1 py-3 bg-surface-container-high rounded-lg font-bold hover:bg-surface-container transition-colors"
+            >
+              Batal
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- View All Events Modal -->
+    <div
+      id="all-events-modal"
+      class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] hidden flex items-center justify-center"
+    >
+      <div
+        class="bg-surface-container-lowest p-6 rounded-2xl shadow-2xl max-w-2xl w-full mx-4 animate-fade-in max-h-[80vh] flex flex-col"
+      >
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-xl font-bold">Semua Kejadian Input Air</h3>
+          <button
+            id="close-all-events"
+            class="p-2 hover:bg-surface-container rounded-full transition-colors"
+          >
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+        <div id="all-events-list" class="space-y-2 overflow-y-auto flex-1">
+          <!-- Generated by JS -->
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const WaterApp = (function () {
+        const state = {
+          allData: [],
+          filteredData: [],
+          weeklyData: {
+            rain: [],
+            irrigation: [],
+            labels: [],
+          },
+          events: [],
+          currentView: "weekly",
+          filters: {
+            year: "all",
+            month: "all",
+          },
+        };
+
+        const monthNames = [
+          "Jan",
+          "Feb",
+          "Mar",
+          "Apr",
+          "Mei",
+          "Jun",
+          "Jul",
+          "Agu",
+          "Sep",
+          "Okt",
+          "Nov",
+          "Des",
+        ];
+
+        const utils = {
+          showNotification: (title, message, type = "info") => {
+            const container = document.getElementById("notification-container");
+            const notif = document.createElement("div");
+            const colors = {
+              info: "border-primary bg-surface-container-lowest",
+              success: "border-secondary bg-secondary-container/30",
+              warning: "border-tertiary bg-tertiary-container/30",
+              error: "border-error bg-error-container/20",
+            };
+
+            notif.className = `${colors[type]} border-2 p-4 rounded-xl shadow-lg max-w-sm animate-fade-in flex items-start gap-3`;
+            notif.innerHTML = `
+              <span class="material-symbols-outlined ${type === "error" ? "text-error" : type === "success" ? "text-secondary" : "text-primary"}">
+                ${type === "success" ? "check_circle" : type === "error" ? "error" : "info"}
+              </span>
+              <div>
+                <div class="font-bold text-sm">${title}</div>
+                <div class="text-xs text-on-surface-variant mt-1">${message}</div>
+              </div>
+            `;
+
+            container.appendChild(notif);
+            setTimeout(() => {
+              notif.style.opacity = "0";
+              notif.style.transform = "translateX(100%)";
+              setTimeout(() => notif.remove(), 300);
+            }, 4000);
+          },
+
+          formatDate: (date) => {
+            return date.toLocaleDateString("id-ID", {
+              month: "short",
+              day: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+            });
+          },
+
+          formatDateFull: (date) => {
+            return date.toLocaleDateString("id-ID", {
+              weekday: "long",
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            });
+          },
+        };
+
+        function populateYearFilter() {
+          const yearSelect = document.getElementById("filter-year");
+          const years = [
+            ...new Set(
+              state.allData.map((d) => new Date(d.date).getFullYear()),
+            ),
+          ].sort((a, b) => b - a);
+
+          years.forEach((year) => {
+            const option = document.createElement("option");
+            option.value = year;
+            option.textContent = year;
+            yearSelect.appendChild(option);
+          });
+        }
+
+        function applyFilters() {
+          const yearFilter = document.getElementById("filter-year").value;
+          const monthFilter = document.getElementById("filter-month").value;
+
+          state.filters.year = yearFilter;
+          state.filters.month = monthFilter;
+
+          state.filteredData = state.allData.filter((d) => {
+            const date = new Date(d.date);
+            const yearMatch =
+              yearFilter === "all" ||
+              date.getFullYear().toString() === yearFilter;
+            const monthMatch =
+              monthFilter === "all" ||
+              date.getMonth().toString() === monthFilter;
+            return yearMatch && monthMatch;
+          });
+
+          updateAllVisualizations();
+
+          const periodText = getPeriodText();
+          document.getElementById("period-info").textContent =
+            `Periode: ${periodText}`;
+
+          utils.showNotification(
+            "Filter Diterapkan",
+            `Menampilkan ${state.filteredData.length} data untuk ${periodText}`,
+            "success",
+          );
+        }
+
+        function getPeriodText() {
+          const year =
+            state.filters.year === "all" ? "Semua Tahun" : state.filters.year;
+          const month =
+            state.filters.month === "all"
+              ? "Semua Bulan"
+              : monthNames[parseInt(state.filters.month)];
+          return `${month} ${year}`;
+        }
+
+        function updateAllVisualizations() {
+          updateHeroSection();
+          updateWeeklyBars();
+          updateEventLog();
+          updateZoneMap();
+          updateLineCharts();
+          updateStatistics();
+        }
+
+        function updateHeroSection() {
+          const data = state.filteredData;
+          if (data.length === 0) {
+            document.getElementById("total-input").textContent = "0.0";
+            document.getElementById("saturation-text").textContent = "0%";
+            document.getElementById("saturation-circle-text").textContent =
+              "0%";
+            document.getElementById("saturation-bar").style.width = "0%";
+            document.querySelector(".progress-ring").style.strokeDashoffset =
+              "691";
+            return;
+          }
+
+          // Total Input (Presipitasi + Irigasi)
+          const totalWater = data.reduce(
+            (sum, d) => sum + (d.precipitation || 0) + (d.irrigation || 0),
+            0,
+          );
+          document.getElementById("total-input").textContent =
+            totalWater.toFixed(1);
+
+          // Kalkulasi Saturasi dari Koefisien Stres (Ks)
+          const avgKs =
+            data.reduce(
+              (sum, d) => sum + (d.water_stress_coefficient || 1),
+              0,
+            ) / data.length;
+          let saturationPct = Math.round(avgKs * 100);
+          if (saturationPct > 100) saturationPct = 100;
+
+          // Update UI Saturasi
+          document.getElementById("saturation-bar").style.width =
+            `${saturationPct}%`;
+          document.getElementById("saturation-text").textContent =
+            `${saturationPct}%`;
+          document.getElementById("saturation-circle-text").textContent =
+            `${saturationPct}%`;
+
+          const circle = document.querySelector(".progress-ring");
+          const offset = 691 - (saturationPct / 100) * 691;
+          circle.style.strokeDashoffset = offset;
+        }
+
+        function updateWeeklyBars() {
+          const container = document.getElementById("weekly-bars");
+          container.innerHTML = "";
+
+          const data = state.filteredData;
+          if (data.length === 0) return;
+
+          let displayData = [];
+          let labels = [];
+
+          if (state.currentView === "weekly") {
+            // Ambil 7 data terakhir atau semua jika kurang dari 7
+            const recentData = data.slice(-7);
+            displayData = recentData;
+            labels = recentData.map((d, i) => {
+              const date = new Date(d.date);
+              return (
+                ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"][
+                  date.getDay()
+                ] || `H${i + 1}`
+              );
+            });
+          } else {
+            // View bulanan - agregasi per minggu
+            const weeklyAgg = aggregateByWeek(data);
+            displayData = weeklyAgg.slice(-4); // 4 minggu terakhir
+            labels = displayData.map((_, i) => `Mg ${i + 1}`);
+          }
+
+          const rainValues = displayData.map((d) => d.precipitation || 0);
+          const irrigationValues = displayData.map((d) => d.irrigation || 0);
+          const maxValue = Math.max(...rainValues, ...irrigationValues, 1);
+
+          displayData.forEach((d, i) => {
+            const rain = rainValues[i];
+            const irrigation = irrigationValues[i];
+
+            const bar = document.createElement("div");
+            bar.className = "flex-1 flex flex-col items-center gap-2";
+            bar.innerHTML = `
+              <div class="w-full flex flex-col gap-1 relative group cursor-pointer">
+                <div class="w-full bg-secondary rounded-t-full water-bar relative overflow-hidden" 
+                     style="height: ${(rain / maxValue) * 150}px">
+                  <span class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[10px] font-bold text-white opacity-0 group-hover:opacity-100 transition-opacity">${rain.toFixed(1)}mm</span>
+                </div>
+                <div class="w-full bg-tertiary rounded-b-full water-bar relative overflow-hidden" 
+                     style="height: ${(irrigation / maxValue) * 150}px">
+                  <span class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[10px] font-bold text-white opacity-0 group-hover:opacity-100 transition-opacity">${irrigation.toFixed(1)}mm</span>
+                </div>
+              </div>
+              <span class="text-[10px] font-bold text-on-surface-variant uppercase">${labels[i]}</span>
+            `;
+            container.appendChild(bar);
+          });
+        }
+
+        function aggregateByWeek(data) {
+          // Sederhana: kelompokkan per 7 hari
+          const weeks = [];
+          for (let i = 0; i < data.length; i += 7) {
+            const weekData = data.slice(i, i + 7);
+            const agg = {
+              precipitation: weekData.reduce(
+                (sum, d) => sum + (d.precipitation || 0),
+                0,
+              ),
+              irrigation: weekData.reduce(
+                (sum, d) => sum + (d.irrigation || 0),
+                0,
+              ),
+              water_stress_coefficient:
+                weekData.reduce(
+                  (sum, d) => sum + (d.water_stress_coefficient || 1),
+                  0,
+                ) / weekData.length,
+            };
+            weeks.push(agg);
+          }
+          return weeks;
+        }
+
+        function updateEventLog() {
+          const container = document.getElementById("event-log");
+          container.innerHTML = "";
+
+          const data = state.filteredData;
+          if (data.length === 0) {
+            container.innerHTML = `<div class="text-center text-on-surface-variant py-8">Tidak ada data untuk periode ini</div>`;
+            return;
+          }
+
+          // Buat events dari data
+          const events = data
+            .map((d, i) => {
+              const date = new Date(d.date);
+              const rain = d.precipitation || 0;
+              const irrigation = d.irrigation || 0;
+
+              const events = [];
+              if (rain > 0) {
+                events.push({
+                  type: "rain",
+                  amount: rain,
+                  date: date,
+                  icon: "cloudy_snowing",
+                  sensor: `Sensor A${(i % 3) + 1}`,
+                });
+              }
+              if (irrigation > 0) {
+                events.push({
+                  type: "irrigation",
+                  amount: irrigation,
+                  date: date,
+                  icon: "sprinkler",
+                  sensor: `Zona ${(i % 2) + 1}`,
+                });
+              }
+              return events;
+            })
+            .flat()
+            .sort((a, b) => b.date - a.date)
+            .slice(0, 5);
+
+          events.forEach((event) => {
+            const item = document.createElement("div");
+            item.className =
+              "event-card flex items-center justify-between p-4 bg-surface-container-high rounded-lg";
+            item.innerHTML = `
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full ${event.type === "irrigation" ? "bg-primary-container" : "bg-tertiary-container"} flex items-center justify-center">
+                  <span class="material-symbols-outlined text-sm ${event.type === "irrigation" ? "text-primary" : "text-tertiary"}">${event.icon}</span>
+                </div>
+                <div>
+                  <div class="text-sm font-bold capitalize">${event.type === "irrigation" ? "Irigasi" : "Hujan"}</div>
+                  <div class="text-xs text-on-surface-variant">${event.sensor} • ${utils.formatDate(event.date)}</div>
+                </div>
+              </div>
+              <span class="text-lg font-extrabold ${event.type === "irrigation" ? "text-primary" : "text-tertiary"}">${event.amount.toFixed(1)}mm</span>
+            `;
+            container.appendChild(item);
+          });
+
+          state.events = events;
+        }
+
+        function updateZoneMap() {
+          const canvas = document.getElementById("zone-map");
+          if (!canvas) return;
+
+          const ctx = canvas.getContext("2d");
+          const dpr = window.devicePixelRatio || 1;
+          const rect = canvas.parentElement.getBoundingClientRect();
+
+          canvas.width = rect.width * dpr;
+          canvas.height = rect.height * dpr;
+          ctx.scale(dpr, dpr);
+
+          const width = rect.width;
+          const height = rect.height;
+
+          ctx.clearRect(0, 0, width, height);
+
+          const data = state.filteredData;
+          if (data.length === 0) return;
+
+          const totalWater = data.reduce(
+            (sum, d) => sum + (d.precipitation || 0) + (d.irrigation || 0),
+            0,
+          );
+          const zoneA = totalWater * 0.55;
+          const zoneB = totalWater * 0.45;
+
+          // Update labels
+          document.getElementById("zone-a-label").textContent =
+            `Zona A: ${zoneA.toFixed(1)}mm`;
+          document.getElementById("zone-b-label").textContent =
+            `Zona B: ${zoneB.toFixed(1)}mm`;
+
+          // Gambar zona sebagai heatmap sederhana
+          const gradientA = ctx.createRadialGradient(
+            width * 0.3,
+            height * 0.4,
+            0,
+            width * 0.3,
+            height * 0.4,
+            width * 0.25,
+          );
+          gradientA.addColorStop(0, "rgba(116, 100, 20, 0.8)");
+          gradientA.addColorStop(1, "rgba(116, 100, 20, 0.2)");
+
+          const gradientB = ctx.createRadialGradient(
+            width * 0.7,
+            height * 0.6,
+            0,
+            width * 0.7,
+            height * 0.6,
+            width * 0.25,
+          );
+          gradientB.addColorStop(0, "rgba(83, 109, 34, 0.8)");
+          gradientB.addColorStop(1, "rgba(83, 109, 34, 0.2)");
+
+          ctx.fillStyle = gradientA;
+          ctx.beginPath();
+          ctx.arc(width * 0.3, height * 0.4, width * 0.25, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.fillStyle = gradientB;
+          ctx.beginPath();
+          ctx.arc(width * 0.7, height * 0.6, width * 0.25, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Label zona
+          ctx.fillStyle = "#fff";
+          ctx.font = "bold 12px sans-serif";
+          ctx.textAlign = "center";
+          ctx.fillText("Zona A", width * 0.3, height * 0.4);
+          ctx.fillText("Zona B", width * 0.7, height * 0.6);
+        }
+
+        function updateLineCharts() {
+          const data = state.filteredData;
+          if (data.length === 0) return;
+
+          // Ambil maksimal 30 data terakhir untuk line chart
+          const chartData = data.slice(-30);
+          const precipData = chartData.map((d) => d.precipitation || 0);
+          const irrigationData = chartData.map((d) => d.irrigation || 0);
+
+          renderLineChart("precipChart", precipData, "rgb(83, 109, 34)");
+          renderLineChart(
+            "irrigationChart",
+            irrigationData,
+            "rgb(252, 185, 115)",
+          );
+        }
+
+        function renderLineChart(canvasId, data, color) {
+          const canvas = document.getElementById(canvasId);
+          if (!canvas) return;
+
+          const ctx = canvas.getContext("2d");
+          const dpr = window.devicePixelRatio || 1;
+          const rect = canvas.parentElement.getBoundingClientRect();
+
+          canvas.width = rect.width * dpr;
+          canvas.height = rect.height * dpr;
+          ctx.scale(dpr, dpr);
+
+          const width = rect.width;
+          const height = rect.height;
+          const padding = 30;
+          const chartWidth = width - padding * 2;
+          const chartHeight = height - padding * 2;
+
+          const max = Math.max(...data, 1);
+          const min = 0;
+          const range = max - min || 1;
+
+          ctx.clearRect(0, 0, width, height);
+
+          // Grid lines
+          ctx.strokeStyle = "rgba(0,0,0,0.1)";
+          ctx.lineWidth = 1;
+          for (let i = 0; i <= 4; i++) {
+            const y = padding + (i / 4) * chartHeight;
+            ctx.beginPath();
+            ctx.moveTo(padding, y);
+            ctx.lineTo(width - padding, y);
+            ctx.stroke();
+          }
+
+          // Draw line
+          ctx.beginPath();
+          ctx.strokeStyle = color;
+          ctx.lineWidth = 3;
+          ctx.lineCap = "round";
+          ctx.lineJoin = "round";
+
+          if (data.length === 1) {
+            const x = padding + chartWidth / 2;
+            const y =
+              padding + chartHeight - ((data[0] - min) / range) * chartHeight;
+            ctx.moveTo(x, y);
+            ctx.lineTo(x, y);
+          } else {
+            data.forEach((value, i) => {
+              const x = padding + (i / (data.length - 1)) * chartWidth;
+              const y =
+                padding + chartHeight - ((value - min) / range) * chartHeight;
+              if (i === 0) ctx.moveTo(x, y);
+              else ctx.lineTo(x, y);
+            });
+          }
+
+          ctx.stroke();
+
+          // Draw gradient fill
+          if (data.length > 1) {
+            ctx.lineTo(padding + chartWidth, padding + chartHeight);
+            ctx.lineTo(padding, padding + chartHeight);
+            ctx.closePath();
+
+            const gradient = ctx.createLinearGradient(0, padding, 0, height);
+            gradient.addColorStop(
+              0,
+              color.replace("rgb", "rgba").replace(")", ", 0.3)"),
+            );
+            gradient.addColorStop(
+              1,
+              color.replace("rgb", "rgba").replace(")", ", 0)"),
+            );
+            ctx.fillStyle = gradient;
+            ctx.fill();
+          }
+
+          // Draw points
+          data.forEach((value, i) => {
+            const x =
+              data.length === 1
+                ? padding + chartWidth / 2
+                : padding + (i / (data.length - 1)) * chartWidth;
+            const y =
+              padding + chartHeight - ((value - min) / range) * chartHeight;
+
+            ctx.beginPath();
+            ctx.fillStyle = "#fff";
+            ctx.arc(x, y, 5, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.fillStyle = color;
+            ctx.arc(x, y, 3, 0, Math.PI * 2);
+            ctx.fill();
+          });
+        }
+
+        function updateStatistics() {
+          const data = state.filteredData;
+
+          if (data.length === 0) {
+            document.getElementById("stat-total-rain").textContent = "0 mm";
+            document.getElementById("stat-total-irrigation").textContent =
+              "0 mm";
+            document.getElementById("stat-total-days").textContent = "0";
+            document.getElementById("stat-avg-daily").textContent = "0 mm";
+            return;
+          }
+
+          const totalRain = data.reduce(
+            (sum, d) => sum + (d.precipitation || 0),
+            0,
+          );
+          const totalIrrigation = data.reduce(
+            (sum, d) => sum + (d.irrigation || 0),
+            0,
+          );
+          const totalDays = data.length;
+          const avgDaily = (totalRain + totalIrrigation) / totalDays;
+
+          document.getElementById("stat-total-rain").textContent =
+            `${totalRain.toFixed(1)} mm`;
+          document.getElementById("stat-total-irrigation").textContent =
+            `${totalIrrigation.toFixed(1)} mm`;
+          document.getElementById("stat-total-days").textContent = totalDays;
+          document.getElementById("stat-avg-daily").textContent =
+            `${avgDaily.toFixed(1)} mm`;
+        }
+
+        function toggleView(view) {
+          state.currentView = view;
+          document.getElementById("view-monthly").className =
+            view === "monthly"
+              ? "text-yellow-800 dark:text-yellow-200 font-bold border-b-2 border-yellow-500 flex items-center gap-2"
+              : "text-stone-500 dark:text-stone-400 flex items-center gap-2 hover:opacity-80 transition-opacity";
+          document.getElementById("view-weekly").className =
+            view === "weekly"
+              ? "text-yellow-800 dark:text-yellow-200 font-bold border-b-2 border-yellow-500 flex items-center gap-2"
+              : "text-stone-500 dark:text-stone-400 flex items-center gap-2 hover:opacity-80 transition-opacity";
+
+          document.getElementById("chart-title").textContent =
+            view === "monthly" ? "Input Air Bulanan" : "Input Air Mingguan";
+
+          updateWeeklyBars();
+          utils.showNotification(
+            "Tampilan Diubah",
+            `Beralih ke tampilan ${view === "monthly" ? "bulanan" : "mingguan"}`,
+            "success",
+          );
+        }
+
+        function exportData(format) {
+          const data = {
+            filteredData: state.filteredData,
+            filters: state.filters,
+            exportedAt: new Date().toISOString(),
+          };
+
+          if (format === "csv") {
+            let csv =
+              "Tanggal,Curah Hujan (mm),Irigasi (mm),Total (mm),Koefisien Stres,Saturation\n";
+            state.filteredData.forEach((d) => {
+              const total = (d.precipitation || 0) + (d.irrigation || 0);
+              const ks = d.water_stress_coefficient || 1;
+              csv += `${d.date},${d.precipitation || 0},${d.irrigation || 0},${total.toFixed(1)},${ks.toFixed(2)},${(ks * 100).toFixed(0)}%\n`;
+            });
+            const blob = new Blob([csv], { type: "text/csv" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `input-air-${new Date().toISOString().split("T")[0]}.csv`;
+            a.click();
+          } else {
+            const blob = new Blob([JSON.stringify(data, null, 2)], {
+              type: "application/json",
+            });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `input-air-${new Date().toISOString().split("T")[0]}.json`;
+            a.click();
+          }
+
+          utils.showNotification(
+            "Ekspor Berhasil",
+            `Data diekspor sebagai ${format.toUpperCase()}`,
+            "success",
+          );
+        }
+
+        function addEvent(e) {
+          e.preventDefault();
+          const type = document.getElementById("event-type").value;
+          const amount = parseFloat(
+            document.getElementById("event-amount").value,
+          );
+          const datetime = new Date(
+            document.getElementById("event-datetime").value,
+          );
+
+          const newEvent = {
+            type,
+            amount,
+            date: datetime,
+            icon: type === "irrigation" ? "sprinkler" : "cloudy_snowing",
+            sensor: type === "irrigation" ? "Input Manual" : "Stasiun Cuaca",
+          };
+
+          // Tambahkan ke data (tapi ini tidak akan persist ke CSV)
+          const newData = {
+            date: datetime.toISOString().split("T")[0],
+            precipitation: type === "rain" ? amount : 0,
+            irrigation: type === "irrigation" ? amount : 0,
+            water_stress_coefficient: 1,
+            growth_stage: "unknown",
+          };
+
+          state.allData.push(newData);
+          applyFilters();
+
+          document.getElementById("add-modal").classList.add("hidden");
+          document.getElementById("add-form").reset();
+
+          utils.showNotification(
+            "Kejadian Ditambahkan",
+            `${type === "irrigation" ? "Irigasi" : "Hujan"} tercatat: ${amount}mm`,
+            "success",
+          );
+        }
+
+        function showAllEvents() {
+          const modal = document.getElementById("all-events-modal");
+          const list = document.getElementById("all-events-list");
+
+          list.innerHTML = "";
+
+          const data = state.filteredData;
+          if (data.length === 0) {
+            list.innerHTML = `<div class="text-center text-on-surface-variant py-8">Tidak ada data</div>`;
+          } else {
+            // Buat semua events
+            const allEvents = data
+              .map((d, i) => {
+                const date = new Date(d.date);
+                const events = [];
+                if (d.precipitation > 0) {
+                  events.push({
+                    type: "rain",
+                    amount: d.precipitation,
+                    date: date,
+                    icon: "cloudy_snowing",
+                    sensor: `Sensor A${(i % 3) + 1}`,
+                  });
+                }
+                if (d.irrigation > 0) {
+                  events.push({
+                    type: "irrigation",
+                    amount: d.irrigation,
+                    date: date,
+                    icon: "sprinkler",
+                    sensor: `Zona ${(i % 2) + 1}`,
+                  });
+                }
+                return events;
+              })
+              .flat()
+              .sort((a, b) => b.date - a.date);
+
+            allEvents.forEach((event) => {
+              const item = document.createElement("div");
+              item.className =
+                "flex items-center justify-between p-3 bg-surface-container-high rounded-lg";
+              item.innerHTML = `
+                <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 rounded-full ${event.type === "irrigation" ? "bg-primary-container" : "bg-tertiary-container"} flex items-center justify-center">
+                    <span class="material-symbols-outlined text-xs ${event.type === "irrigation" ? "text-primary" : "text-tertiary"}">${event.icon}</span>
+                  </div>
+                  <div>
+                    <div class="text-sm font-bold">${event.type === "irrigation" ? "Irigasi" : "Hujan"}</div>
+                    <div class="text-xs text-on-surface-variant">${event.sensor} • ${utils.formatDateFull(event.date)}</div>
+                  </div>
+                </div>
+                <span class="font-extrabold ${event.type === "irrigation" ? "text-primary" : "text-tertiary"}">${event.amount.toFixed(1)}mm</span>
+              `;
+              list.appendChild(item);
+            });
+          }
+
+          modal.classList.remove("hidden");
+        }
+
+        function init() {
+          console.log("💧 Menginisialisasi Input Air...");
+
+          const initialState = SunflowerData.init();
+          const sharedData = initialState.data || [];
+
+          console.log(
+            `📊 Input Air: ${sharedData.length} baris dari ${initialState.sourceFile}`,
+          );
+
+          state.allData = sharedData;
+          state.filteredData = [...sharedData];
+
+          // Populate filter tahun
+          populateYearFilter();
+
+          // Update semua visualisasi
+          updateAllVisualizations();
+
+          // Set default waktu untuk form Add Event
+          const now = new Date();
+          now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+          document.getElementById("event-datetime").value = now
+            .toISOString()
+            .slice(0, 16);
+
+          // Update period info
+          document.getElementById("period-info").textContent =
+            `Periode: ${getPeriodText()}`;
+
+          // Event listeners
+          document
+            .getElementById("filter-year")
+            ?.addEventListener("change", applyFilters);
+          document
+            .getElementById("filter-month")
+            ?.addEventListener("change", applyFilters);
+          document
+            .getElementById("reset-filter")
+            ?.addEventListener("click", () => {
+              document.getElementById("filter-year").value = "all";
+              document.getElementById("filter-month").value = "all";
+              applyFilters();
+            });
+
+          document
+            .getElementById("view-monthly")
+            ?.addEventListener("click", () => toggleView("monthly"));
+          document
+            .getElementById("view-weekly")
+            ?.addEventListener("click", () => toggleView("weekly"));
+          document
+            .getElementById("export-csv-btn")
+            ?.addEventListener("click", () => exportData("csv"));
+          document
+            .getElementById("export-json-btn")
+            ?.addEventListener("click", () => exportData("json"));
+
+          document
+            .getElementById("add-event-btn")
+            ?.addEventListener("click", () => {
+              document.getElementById("add-modal").classList.remove("hidden");
+            });
+
+          document
+            .getElementById("add-form")
+            ?.addEventListener("submit", addEvent);
+
+          document
+            .getElementById("cancel-add")
+            ?.addEventListener("click", () => {
+              document.getElementById("add-modal").classList.add("hidden");
+            });
+
+          document
+            .getElementById("view-all-btn")
+            ?.addEventListener("click", showAllEvents);
+          document
+            .getElementById("close-all-events")
+            ?.addEventListener("click", () => {
+              document
+                .getElementById("all-events-modal")
+                .classList.add("hidden");
+            });
+
+          // Mengatur tombol pilihan tipe event
+          document.querySelectorAll(".event-type-btn").forEach((btn) => {
+            btn.addEventListener("click", () => {
+              document.querySelectorAll(".event-type-btn").forEach((b) => {
+                b.classList.remove(
+                  "bg-primary-container",
+                  "text-on-primary-container",
+                );
+                b.classList.add(
+                  "bg-surface-container",
+                  "text-on-surface-variant",
+                );
+              });
+              btn.classList.remove(
+                "bg-surface-container",
+                "text-on-surface-variant",
+              );
+              btn.classList.add(
+                "bg-primary-container",
+                "text-on-primary-container",
+              );
+              document.getElementById("event-type").value = btn.dataset.type;
+            });
+          });
+
+          // Listen untuk update real-time
+          window.addEventListener("sunflower-data-updated", (e) => {
+            utils.showNotification(
+              "Data Diperbarui",
+              "Visualisasi diperbarui dengan data CSV baru",
+              "success",
+            );
+            const newData = SunflowerData.getData();
+            state.allData = newData;
+
+            // Refresh tahun filter
+            const yearSelect = document.getElementById("filter-year");
+            yearSelect.innerHTML = '<option value="all">Semua Tahun</option>';
+            populateYearFilter();
+
+            applyFilters();
+          });
+
+          // Resize handler
+          let resizeTimeout;
+          window.addEventListener("resize", () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+              updateZoneMap();
+              updateLineCharts();
+            }, 100);
+          });
+
+          window.WaterApp = { toggleView, exportData, applyFilters };
+
+          utils.showNotification(
+            "Input Air Siap",
+            `Terhubung dengan ${sharedData.length} baris data. Gunakan filter untuk menelusuri data.`,
+            "success",
+          );
+        }
+
+        return { init };
+      })();
+
+      document.addEventListener("DOMContentLoaded", WaterApp.init);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,1999 @@
+<!doctype html>
+<html class="light" lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Sunflower Balance - Ringkasan Analisis</title>
+    <script src="../shared-data.js"></script>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Be+Vietnam+Pro:wght@300;400;500;600&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary-dim": "#675706",
+              "surface-container-highest": "#e9e9de",
+              "secondary-dim": "#476016",
+              tertiary: "#8c591c",
+              "on-secondary-fixed": "#304600",
+              "on-primary-fixed-variant": "#6c5c0c",
+              "on-primary-fixed": "#4d4000",
+              "tertiary-dim": "#7e4d10",
+              "secondary-fixed": "#ceee93",
+              "on-surface": "#383833",
+              "tertiary-fixed-dim": "#edac67",
+              outline: "#81817a",
+              "on-tertiary-fixed": "#432500",
+              "surface-container-high": "#efeee5",
+              "outline-variant": "#bab9b2",
+              "on-tertiary-container": "#5f3700",
+              "on-error-container": "#520c00",
+              background: "#fefcf4",
+              error: "#be2d06",
+              "secondary-fixed-dim": "#c0df86",
+              "surface-variant": "#e9e9de",
+              "on-tertiary": "#ffffff",
+              secondary: "#536d22",
+              primary: "#746414",
+              "inverse-on-surface": "#9e9d96",
+              "tertiary-container": "#fcb973",
+              "inverse-primary": "#fce589",
+              surface: "#fefcf4",
+              "on-primary-container": "#625300",
+              "on-secondary-container": "#41590f",
+              "primary-container": "#fce589",
+              "tertiary-fixed": "#fcb973",
+              "on-secondary": "#ffffff",
+              "surface-container-low": "#fbf9f1",
+              "surface-container": "#f5f4eb",
+              "error-container": "#f95630",
+              "primary-fixed-dim": "#edd77d",
+              "surface-tint": "#746414",
+              "on-surface-variant": "#65655f",
+              "on-background": "#383833",
+              "surface-bright": "#fefcf4",
+              "on-error": "#ffffff",
+              "surface-container-lowest": "#ffffff",
+              "surface-dim": "#e4e3d8",
+              "on-secondary-fixed-variant": "#4a6319",
+              "secondary-container": "#ceee93",
+              "on-primary": "#ffffff",
+              "inverse-surface": "#0e0f0a",
+              "error-dim": "#b92902",
+              "on-tertiary-fixed-variant": "#6c3e00",
+            },
+            borderRadius: {
+              DEFAULT: "1rem",
+              lg: "2rem",
+              xl: "3rem",
+              full: "9999px",
+            },
+            fontFamily: {
+              headline: ["Plus Jakarta Sans"],
+              body: ["Be Vietnam Pro"],
+              label: ["Be Vietnam Pro"],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      .material-symbols-outlined {
+        font-variation-settings:
+          "FILL" 0,
+          "wght" 400,
+          "GRAD" 0,
+          "opsz" 24;
+      }
+      body {
+        font-family: "Be Vietnam Pro", sans-serif;
+      }
+      h1,
+      h2,
+      h3,
+      h4 {
+        font-family: "Plus Jakarta Sans", sans-serif;
+      }
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .insight-card {
+        transition: all 0.3s ease;
+      }
+      .insight-card:hover {
+        transform: translateY(-4px);
+      }
+      .animate-fade-in {
+        animation: fadeIn 0.5s ease-out;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes shimmer {
+        0% {
+          background-position: -200% 0;
+        }
+        100% {
+          background-position: 200% 0;
+        }
+      }
+      .shimmer {
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.4),
+          transparent
+        );
+        background-size: 200% 100%;
+        animation: shimmer 2s infinite;
+      }
+      .filter-chip {
+        transition: all 0.2s ease;
+      }
+      .filter-chip.active {
+        background-color: #746414;
+        color: white;
+      }
+      .metric-bar {
+        transition: width 1s ease-out;
+      }
+
+      /* Hero Section dengan Parallax Effect */
+      .hero-section {
+        position: relative;
+        height: 300px;
+        overflow: hidden;
+        border-radius: 1.5rem;
+        margin-bottom: 2rem;
+      }
+      .hero-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+      }
+      .hero-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          to right,
+          rgba(0, 0, 0, 0.6) 0%,
+          rgba(0, 0, 0, 0.3) 50%,
+          rgba(0, 0, 0, 0.1) 100%
+        );
+        display: flex;
+        align-items: center;
+        padding: 2rem;
+      }
+      .hero-content {
+        color: white;
+        max-width: 600px;
+      }
+      .hero-title {
+        font-size: 2.5rem;
+        font-weight: 800;
+        margin-bottom: 0.5rem;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      }
+      .hero-subtitle {
+        font-size: 1.1rem;
+        opacity: 0.9;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+      }
+    </style>
+  </head>
+  <body class="bg-background text-on-surface min-h-screen">
+    <!-- Notification Container -->
+    <div
+      id="notification-container"
+      class="fixed top-4 right-4 z-[9999] space-y-2"
+    ></div>
+
+    <!-- SideNavBar -->
+    <aside
+      class="h-screen w-64 fixed left-0 top-0 bg-stone-50 border-r-0 flex flex-col p-4 gap-2 z-50"
+    >
+      <div class="mb-8 px-4 py-2">
+        <h2 class="text-xl font-bold text-yellow-800">Sunflower Balance</h2>
+        <p
+          class="text-xs text-on-surface-variant uppercase tracking-wider font-semibold"
+        >
+          Presisi Irigasi
+        </p>
+      </div>
+      <nav class="flex flex-col gap-2">
+        <a
+          class="flex items-center gap-3 px-4 py-3 text-stone-600 hover:bg-stone-200/50 rounded-2xl transition-colors"
+          href="/dashboard_overview/code.html"
+        >
+          <span class="material-symbols-outlined">dashboard</span>
+          <span class="font-medium">Dashboard</span>
+        </a>
+        <a
+          class="flex items-center gap-3 px-4 py-3 text-stone-600 hover:bg-stone-200/50 rounded-2xl transition-colors"
+          href="/water_input_analysis/code.html"
+        >
+          <span class="material-symbols-outlined">water_drop</span>
+          <span class="font-medium">Input Air</span>
+        </a>
+        <a
+          class="flex items-center gap-3 px-4 py-3 text-stone-600 hover:bg-stone-200/50 rounded-2xl transition-colors"
+          href="/plant_response_analysis/code.html"
+        >
+          <span class="material-symbols-outlined">local_florist</span>
+          <span class="font-medium">Respon Tanaman</span>
+        </a>
+        <a
+          class="flex items-center gap-3 px-4 py-3 text-stone-600 hover:bg-stone-200/50 rounded-2xl transition-colors"
+          href="/stress_analysis/code.html"
+        >
+          <span class="material-symbols-outlined">warning</span>
+          <span class="font-medium">Analisis Stres</span>
+        </a>
+        <a
+          class="flex items-center gap-3 px-4 py-3 text-stone-600 hover:bg-stone-200/50 rounded-2xl transition-colors"
+          href="/growth_stage_analysis/code.html"
+        >
+          <span class="material-symbols-outlined">timeline</span>
+          <span class="font-medium">Tahap Pertumbuhan</span>
+        </a>
+        <a
+          class="flex items-center gap-3 px-4 py-3 bg-yellow-100 text-yellow-900 rounded-2xl font-semibold scale-95 transition-transform"
+          href="/insights_summary/code.html"
+        >
+          <span
+            class="material-symbols-outlined"
+            style="font-variation-settings: &quot;FILL&quot; 1"
+            >query_stats</span
+          >
+          <span class="font-medium">Ringkasan Analisis</span>
+        </a>
+      </nav>
+      <div
+        class="mt-auto p-4 flex items-center gap-3 bg-surface-container-low rounded-xl"
+      >
+        <img
+          class="w-10 h-10 rounded-full object-cover"
+          src="https://ui-avatars.com/api/?name=Anang&background=FACC15&color=473C08&bold=true"
+          alt="Alex Gardener"
+        />
+        <div class="overflow-hidden">
+          <p class="text-sm font-bold truncate">Anang Ismail</p>
+          <p class="text-xs text-on-surface-variant truncate">
+            Penyuka Bunga Matahari
+          </p>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="ml-64 min-h-screen">
+      <!-- TopAppBar -->
+      <header
+        class="sticky top-0 z-40 w-full bg-stone-50/80 backdrop-blur-xl flex justify-between items-center px-8 py-4"
+      >
+        <div class="flex flex-col">
+          <h1 class="text-2xl font-bold text-yellow-700">Ringkasan Analisis</h1>
+          <p class="text-sm text-on-surface-variant">
+            Analisis performa untuk Lahan Sektor 7
+          </p>
+        </div>
+        <div class="flex items-center gap-6">
+          <div class="hidden md:flex items-center gap-8 text-sm font-medium">
+            <button
+              id="filter-all"
+              class="filter-chip active px-4 py-2 rounded-full font-semibold"
+            >
+              Semua Data
+            </button>
+            <button
+              id="filter-week"
+              class="filter-chip px-4 py-2 rounded-full text-stone-500 hover:bg-stone-200/50"
+            >
+              7 Hari Terakhir
+            </button>
+            <button
+              id="filter-month"
+              class="filter-chip px-4 py-2 rounded-full text-stone-500 hover:bg-stone-200/50"
+            >
+              30 Hari Terakhir
+            </button>
+          </div>
+          <div class="flex items-center gap-3">
+            <button
+              id="calendar-btn"
+              class="p-2 text-stone-600 hover:bg-stone-200/50 rounded-full transition-colors"
+            >
+              <span class="material-symbols-outlined">calendar_today</span>
+            </button>
+            <button
+              id="settings-btn"
+              class="p-2 text-stone-600 hover:bg-stone-200/50 rounded-full transition-colors"
+            >
+              <span class="material-symbols-outlined">settings</span>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <!-- Filter Panel -->
+      <div class="px-8 pt-4">
+        <div
+          class="bg-surface-container-low rounded-xl p-4 flex flex-wrap gap-4 items-center"
+        >
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-on-surface-variant"
+              >filter_list</span
+            >
+            <span class="font-semibold text-sm">Filter:</span>
+          </div>
+
+          <!-- Filter Tahap Pertumbuhan - DIPERBAIKI -->
+          <div class="flex items-center gap-2">
+            <label class="text-xs text-on-surface-variant">Tahap:</label>
+            <select
+              id="filter-growth-stage"
+              class="px-3 py-1.5 rounded-lg bg-surface-container-high text-sm border border-outline-variant/30 focus:border-primary focus:outline-none"
+            >
+              <option value="all">Semua Tahap</option>
+              <option value="Vegetative">Vegetatif</option>
+              <option value="Flowering">Pembungaan</option>
+              <option value="Seed filling">Pengisian Biji</option>
+              <option value="Maturity">Kematangan</option>
+            </select>
+          </div>
+
+          <!-- Filter Rentang Ks -->
+          <div class="flex items-center gap-2">
+            <label class="text-xs text-on-surface-variant">Stres Air:</label>
+            <select
+              id="filter-ks-range"
+              class="px-3 py-1.5 rounded-lg bg-surface-container-high text-sm border border-outline-variant/30 focus:border-primary focus:outline-none"
+            >
+              <option value="all">Semua Level</option>
+              <option value="optimal">Optimal (Ks > 0.9)</option>
+              <option value="moderate">Sedang (0.7-0.9)</option>
+              <option value="stress">Stres (Ks < 0.7)</option>
+            </select>
+          </div>
+
+          <!-- Filter Defisit Air Tanah -->
+          <div class="flex items-center gap-2">
+            <label class="text-xs text-on-surface-variant">Defisit:</label>
+            <select
+              id="filter-deficit"
+              class="px-3 py-1.5 rounded-lg bg-surface-container-high text-sm border border-outline-variant/30 focus:border-primary focus:outline-none"
+            >
+              <option value="all">Semua</option>
+              <option value="low">Rendah (< 10mm)</option>
+              <option value="medium">Sedang (10-25mm)</option>
+              <option value="high">Tinggi (> 25mm)</option>
+            </select>
+          </div>
+
+          <button
+            id="reset-filters"
+            class="ml-auto px-4 py-1.5 text-sm text-primary font-semibold hover:bg-primary-container/30 rounded-lg transition-colors"
+          >
+            Reset Filter
+          </button>
+        </div>
+      </div>
+
+      <!-- Insights Canvas -->
+      <div class="p-8 space-y-8">
+        <!-- HERO SECTION DENGAN FOTO BUNGA MATAHARI -->
+        <div class="hero-section shadow-2xl">
+          <img
+            src="https://images.unsplash.com/photo-1579506769687-a19460c0b470?fm=jpg&q=80&w=2000&ixlib=rb-4.1.0"
+            alt="Ladang Bunga Matahari"
+            class="hero-image"
+          />
+          <div class="hero-overlay">
+            <div class="hero-content">
+              <h2 class="hero-title">Kebun Bunga Matahari</h2>
+              <p class="hero-subtitle">
+                Analisis presisi untuk panen optimal. Pantau kesehatan tanaman
+                dan efisiensi irigasi dalam satu dashboard.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Header Actions -->
+        <div
+          class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4"
+        >
+          <div>
+            <h2 class="text-3xl font-extrabold tracking-tight text-on-surface">
+              Analisis Performa Lahan
+            </h2>
+            <p class="text-on-surface-variant mt-1" id="data-range-info">
+              Analisis berdasarkan data tersedia •
+              <span id="total-records">0</span> catatan
+            </p>
+          </div>
+          <div class="flex items-center gap-3">
+            <button
+              id="refresh-btn"
+              class="px-6 py-3 rounded-md bg-secondary-container text-on-secondary-container font-semibold flex items-center gap-2 hover:opacity-90 transition-opacity"
+            >
+              <span id="refresh-icon" class="material-symbols-outlined text-lg"
+                >refresh</span
+              >
+              Perbarui Analisis
+            </button>
+            <button
+              id="export-btn"
+              class="px-6 py-3 rounded-md bg-gradient-to-r from-primary to-primary-dim text-on-primary font-semibold flex items-center gap-2 shadow-lg shadow-primary/10 hover:scale-[1.02] transition-transform"
+            >
+              <span class="material-symbols-outlined text-lg">download</span>
+              Ekspor Laporan
+            </button>
+          </div>
+        </div>
+
+        <!-- KPI Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div
+            class="bg-surface-container-low rounded-xl p-6 border-l-4 border-primary"
+          >
+            <div class="flex items-center gap-2 mb-2">
+              <span class="material-symbols-outlined text-primary text-lg"
+                >water_drop</span
+              >
+              <span
+                class="text-xs font-bold uppercase tracking-wider text-on-surface-variant"
+                >Total Penggunaan Air</span
+              >
+            </div>
+            <p id="kpi-total-water" class="text-2xl font-black text-on-surface">
+              0 mm
+            </p>
+            <p id="kpi-water-trend" class="text-xs text-secondary mt-1">
+              ↑ 12% dari rata-rata
+            </p>
+          </div>
+
+          <div
+            class="bg-surface-container-low rounded-xl p-6 border-l-4 border-secondary"
+          >
+            <div class="flex items-center gap-2 mb-2">
+              <span class="material-symbols-outlined text-secondary text-lg"
+                >speed</span
+              >
+              <span
+                class="text-xs font-bold uppercase tracking-wider text-on-surface-variant"
+                >Rata-rata Ks</span
+              >
+            </div>
+            <p id="kpi-avg-ks" class="text-2xl font-black text-on-surface">
+              0.00
+            </p>
+            <p id="kpi-ks-status" class="text-xs text-secondary mt-1">
+              Status: Optimal
+            </p>
+          </div>
+
+          <div
+            class="bg-surface-container-low rounded-xl p-6 border-l-4 border-tertiary"
+          >
+            <div class="flex items-center gap-2 mb-2">
+              <span class="material-symbols-outlined text-tertiary text-lg"
+                >grain</span
+              >
+              <span
+                class="text-xs font-bold uppercase tracking-wider text-on-surface-variant"
+                >Defisit Air Tanah</span
+              >
+            </div>
+            <p id="kpi-avg-deficit" class="text-2xl font-black text-on-surface">
+              0 mm
+            </p>
+            <p
+              id="kpi-deficit-trend"
+              class="text-xs text-on-surface-variant mt-1"
+            >
+              Rata-rata periode
+            </p>
+          </div>
+
+          <div
+            class="bg-surface-container-low rounded-xl p-6 border-l-4 border-error"
+          >
+            <div class="flex items-center gap-2 mb-2">
+              <span class="material-symbols-outlined text-error text-lg"
+                >warning</span
+              >
+              <span
+                class="text-xs font-bold uppercase tracking-wider text-on-surface-variant"
+                >Hari Stres</span
+              >
+            </div>
+            <p id="kpi-stress-days" class="text-2xl font-black text-on-surface">
+              0
+            </p>
+            <p id="kpi-stress-percent" class="text-xs text-error mt-1">
+              0% dari total hari
+            </p>
+          </div>
+        </div>
+
+        <!-- Bento Grid Layout -->
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-6 auto-rows-[240px]">
+          <!-- Large Featured: Tren Penggunaan Air -->
+          <div
+            class="md:col-span-8 md:row-span-2 bg-surface-container-low rounded-xl p-8 flex flex-col justify-between relative overflow-hidden group insight-card"
+          >
+            <div
+              class="absolute top-0 right-0 w-64 h-64 bg-primary-container/20 rounded-full -mr-24 -mt-24 blur-3xl"
+            ></div>
+            <div class="relative z-10">
+              <div class="flex items-center gap-3 mb-6">
+                <div
+                  class="w-12 h-12 rounded-2xl bg-primary-container flex items-center justify-center text-primary"
+                >
+                  <span
+                    class="material-symbols-outlined"
+                    style="font-variation-settings: &quot;FILL&quot; 1"
+                    >water_drop</span
+                  >
+                </div>
+                <div>
+                  <h3 class="text-xl font-bold">Tren Penggunaan Air</h3>
+                  <span
+                    class="text-xs uppercase tracking-widest font-bold text-secondary"
+                    id="water-efficiency-badge"
+                    >Efisiensi: Memuat...</span
+                  >
+                </div>
+              </div>
+              <p
+                class="text-lg text-on-surface-variant leading-relaxed max-w-2xl"
+              >
+                Penggunaan air rata-rata mingguan mencapai
+                <span class="text-primary font-bold" id="weekly-water-avg"
+                  >0 mm</span
+                >
+                dengan efisiensi irigasi sebesar
+                <span class="text-primary font-bold" id="irrigation-efficiency"
+                  >0%</span
+                >.
+                <span id="water-insight-text">Analisis memuat...</span>
+              </p>
+            </div>
+            <div
+              class="relative z-10 flex items-end gap-2 h-32 mt-4"
+              id="water-trend-bars"
+            >
+              <!-- Generated by JS -->
+            </div>
+          </div>
+
+          <!-- Card: Pola Stres -->
+          <div
+            class="md:col-span-4 md:row-span-1 bg-surface-container-lowest border border-outline-variant/10 rounded-xl p-6 shadow-sm flex flex-col justify-between insight-card cursor-pointer"
+            onclick="InsightsApp.showDetail('stress')"
+          >
+            <div class="flex justify-between items-start">
+              <div
+                class="w-10 h-10 rounded-full bg-error-container/20 text-error flex items-center justify-center"
+              >
+                <span class="material-symbols-outlined">warning</span>
+              </div>
+              <span
+                id="stress-alert-badge"
+                class="text-xs font-bold text-error bg-error-container/10 px-2 py-1 rounded-full hidden"
+                >PERLU TINDAKAN</span
+              >
+            </div>
+            <div>
+              <h4 class="font-bold text-lg">Pola Stres Air</h4>
+              <p
+                class="text-sm text-on-surface-variant mt-1"
+                id="stress-summary"
+              >
+                Analisis memuat...
+              </p>
+            </div>
+          </div>
+
+          <!-- Card: Dampak Pertumbuhan -->
+          <div
+            class="md:col-span-4 md:row-span-1 bg-secondary-container/30 rounded-xl p-6 flex flex-col justify-between insight-card"
+          >
+            <div class="flex items-center gap-3">
+              <div
+                class="w-10 h-10 rounded-xl bg-secondary-container text-on-secondary-container flex items-center justify-center"
+              >
+                <span class="material-symbols-outlined">trending_up</span>
+              </div>
+              <h4 class="font-bold">Dampak Pertumbuhan</h4>
+            </div>
+            <div>
+              <p
+                id="growth-stage-current"
+                class="text-2xl font-black text-secondary"
+              >
+                Memuat...
+              </p>
+              <p
+                class="text-sm text-on-secondary-container font-medium"
+                id="growth-stage-desc"
+              >
+                Tahap pertumbuhan dominan
+              </p>
+            </div>
+          </div>
+
+          <!-- Card: Analisis Presipitasi -->
+          <div
+            class="md:col-span-4 bg-surface-container-low rounded-xl p-6 flex flex-col gap-4 insight-card cursor-pointer hover:bg-tertiary-container/10 transition-colors"
+            onclick="InsightsApp.showDetail('precipitation')"
+          >
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-tertiary"
+                >cloudy_snowing</span
+              >
+              <h4 class="font-bold text-sm uppercase tracking-wider">
+                Presipitasi vs Irigasi
+              </h4>
+            </div>
+            <div class="flex justify-between items-end">
+              <div>
+                <p class="text-xs text-on-surface-variant">Curah Hujan</p>
+                <p id="total-precipitation" class="text-xl font-bold">0 mm</p>
+              </div>
+              <div class="text-right">
+                <p class="text-xs text-on-surface-variant">Irigasi</p>
+                <p id="total-irrigation" class="text-xl font-bold text-primary">
+                  0 mm
+                </p>
+              </div>
+            </div>
+            <div
+              class="w-full bg-surface-container-high rounded-full h-2 overflow-hidden"
+            >
+              <div
+                id="precipitation-bar"
+                class="h-full bg-tertiary metric-bar"
+                style="width: 0%"
+              ></div>
+            </div>
+            <!-- Tambahan: Mini chart untuk visualisasi trend -->
+            <div id="precip-trend-mini" class="flex items-end gap-1 h-12 mt-2">
+              <!-- Generated by JS -->
+            </div>
+          </div>
+
+          <!-- Card: Prediksi Panen -->
+          <div
+            class="md:col-span-4 bg-surface-container-low rounded-xl p-6 flex flex-col gap-4 insight-card cursor-pointer hover:bg-primary-container/10 transition-colors"
+            onclick="InsightsApp.showDetail('harvest')"
+          >
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-primary"
+                >psychology</span
+              >
+              <h4 class="font-bold text-sm uppercase tracking-wider">
+                Estimasi Panen
+              </h4>
+            </div>
+            <p class="text-sm text-on-surface-variant">
+              Berdasarkan akumulasi Ks dan defisit air, panen diperkirakan dalam
+              <span id="harvest-estimate" class="font-bold text-primary"
+                >--</span
+              >
+              hari.
+            </p>
+            <div class="flex items-center gap-2 mt-auto">
+              <div class="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
+              <span class="text-xs text-on-surface-variant">Model aktif</span>
+            </div>
+          </div>
+
+          <!-- Card: Kesehatan Akar -->
+          <div
+            class="md:col-span-4 bg-tertiary-container/20 rounded-xl p-6 flex flex-col gap-4 border border-tertiary/10 insight-card cursor-pointer hover:bg-tertiary-container/30 transition-colors"
+            onclick="InsightsApp.showDetail('root')"
+          >
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-tertiary">spa</span>
+              <h4 class="font-bold text-sm uppercase tracking-wider">
+                Kedalaman Akar
+              </h4>
+            </div>
+            <p class="text-sm text-on-surface-variant">
+              Kedalaman akar rata-rata:
+              <span id="avg-root-depth" class="font-bold text-tertiary"
+                >0 cm</span
+              >
+            </p>
+            <p id="root-health-status" class="text-xs text-on-surface-variant">
+              Status kesehatan akar memuat...
+            </p>
+          </div>
+        </div>
+
+        <!-- Analisis Detail Section -->
+        <section class="mt-12">
+          <div class="flex items-center justify-between mb-8">
+            <h3 class="text-2xl font-bold">Analisis Korelasi Detail</h3>
+            <button
+              id="view-raw-btn"
+              class="text-primary font-bold text-sm flex items-center gap-1"
+            >
+              Lihat data mentah
+              <span class="material-symbols-outlined text-sm"
+                >arrow_forward</span
+              >
+            </button>
+          </div>
+
+          <div class="flex flex-col lg:flex-row gap-8 items-stretch">
+            <!-- Chart Container -->
+            <div
+              class="lg:w-1/2 rounded-xl overflow-hidden shadow-2xl shadow-stone-200/50 relative group bg-surface-container-low p-6"
+            >
+              <h4 class="font-bold mb-4 flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary"
+                  >ssid_chart</span
+                >
+                Korelasi Ks vs Defisit Air
+              </h4>
+              <div
+                id="correlation-chart"
+                class="h-64 flex items-end justify-around gap-2"
+              >
+                <!-- Generated by JS -->
+              </div>
+              <div
+                class="mt-4 flex justify-between text-xs text-on-surface-variant"
+              >
+                <span>← Stres Tinggi (Ks rendah)</span>
+                <span>Optimal (Ks tinggi) →</span>
+              </div>
+            </div>
+
+            <!-- Insight Text Content -->
+            <div class="lg:w-1/2 space-y-4">
+              <div
+                class="p-6 bg-surface-container-lowest border border-outline-variant/10 rounded-xl hover:border-primary/30 transition-colors cursor-pointer"
+                onclick="InsightsApp.expandInsight(this)"
+              >
+                <h5 class="font-bold mb-2 flex items-center gap-2">
+                  <span class="w-2 h-2 rounded-full bg-yellow-500"></span>
+                  Analisis Koefisien Stres (Ks)
+                </h5>
+                <p class="text-sm text-on-surface-variant leading-relaxed">
+                  Nilai Ks menunjukkan rasio evapotranspirasi aktual terhadap
+                  potensial.
+                  <span id="ks-insight-detail">Memuat analisis...</span>
+                </p>
+                <div
+                  class="hidden mt-4 pt-4 border-t border-outline-variant/20 expanded-content"
+                >
+                  <p
+                    class="text-xs text-on-surface-variant"
+                    id="ks-expanded-detail"
+                  >
+                    Data Ks rata-rata dan distribusi sedang dihitung...
+                  </p>
+                </div>
+              </div>
+
+              <div
+                class="p-6 bg-surface-container-lowest border border-outline-variant/10 rounded-xl hover:border-secondary/30 transition-colors cursor-pointer"
+                onclick="InsightsApp.expandInsight(this)"
+              >
+                <h5 class="font-bold mb-2 flex items-center gap-2">
+                  <span class="w-2 h-2 rounded-full bg-secondary"></span>
+                  Defisit Air Tanah (SWD)
+                </h5>
+                <p class="text-sm text-on-surface-variant leading-relaxed">
+                  Defisit air tanah mengindikasikan kebutuhan irigasi.
+                  <span id="swd-insight-detail">Memuat analisis...</span>
+                </p>
+                <div
+                  class="hidden mt-4 pt-4 border-t border-outline-variant/20 expanded-content"
+                >
+                  <p
+                    class="text-xs text-on-surface-variant"
+                    id="swd-expanded-detail"
+                  >
+                    Analisis SWD sedang diproses...
+                  </p>
+                </div>
+              </div>
+
+              <div
+                class="p-6 bg-surface-container-lowest border border-outline-variant/10 rounded-xl hover:border-tertiary/30 transition-colors cursor-pointer"
+                onclick="InsightsApp.expandInsight(this)"
+              >
+                <h5 class="font-bold mb-2 flex items-center gap-2">
+                  <span class="w-2 h-2 rounded-full bg-tertiary"></span>
+                  Rekomendasi Irigasi
+                </h5>
+                <p
+                  class="text-sm text-on-surface-variant leading-relaxed"
+                  id="irrigation-recommendation"
+                >
+                  Memuat rekomendasi berdasarkan data...
+                </p>
+                <div
+                  class="hidden mt-4 pt-4 border-t border-outline-variant/20 expanded-content"
+                >
+                  <p
+                    class="text-xs text-on-surface-variant"
+                    id="irrigation-expanded"
+                  >
+                    Detail rekomendasi irigasi sedang disusun...
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Tabel Data Detail -->
+        <section class="mt-12">
+          <div class="flex items-center justify-between mb-6">
+            <h3 class="text-2xl font-bold">Data Harian Terfilter</h3>
+            <div class="flex gap-2">
+              <button
+                id="prev-page"
+                class="px-3 py-1 rounded-lg bg-surface-container-high hover:bg-surface-container text-sm disabled:opacity-50"
+              >
+                <span class="material-symbols-outlined text-sm"
+                  >chevron_left</span
+                >
+              </button>
+              <span id="page-info" class="px-3 py-1 text-sm font-medium"
+                >Hal 1</span
+              >
+              <button
+                id="next-page"
+                class="px-3 py-1 rounded-lg bg-surface-container-high hover:bg-surface-container text-sm disabled:opacity-50"
+              >
+                <span class="material-symbols-outlined text-sm"
+                  >chevron_right</span
+                >
+              </button>
+            </div>
+          </div>
+
+          <div class="bg-surface-container-low rounded-xl overflow-hidden">
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm">
+                <thead class="bg-surface-container-high">
+                  <tr>
+                    <th
+                      class="px-4 py-3 text-left font-semibold text-on-surface-variant"
+                    >
+                      Tanggal
+                    </th>
+                    <th
+                      class="px-4 py-3 text-left font-semibold text-on-surface-variant"
+                    >
+                      Tahap
+                    </th>
+                    <th
+                      class="px-4 py-3 text-right font-semibold text-on-surface-variant"
+                    >
+                      Curah Hujan
+                    </th>
+                    <th
+                      class="px-4 py-3 text-right font-semibold text-on-surface-variant"
+                    >
+                      Irigasi
+                    </th>
+                    <th
+                      class="px-4 py-3 text-right font-semibold text-on-surface-variant"
+                    >
+                      Penggunaan Air
+                    </th>
+                    <th
+                      class="px-4 py-3 text-right font-semibold text-on-surface-variant"
+                    >
+                      Defisit
+                    </th>
+                    <th
+                      class="px-4 py-3 text-right font-semibold text-on-surface-variant"
+                    >
+                      Ks
+                    </th>
+                    <th
+                      class="px-4 py-3 text-center font-semibold text-on-surface-variant"
+                    >
+                      Status
+                    </th>
+                  </tr>
+                </thead>
+                <tbody
+                  id="data-table-body"
+                  class="divide-y divide-outline-variant/20"
+                >
+                  <!-- Generated by JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Footer -->
+      <footer class="p-12 text-center text-on-surface-variant/40">
+        <p class="text-xs font-medium tracking-tighter uppercase">
+          Sunflower Balance Intelligence Engine • v2.4.0
+        </p>
+      </footer>
+    </main>
+
+    <!-- Detail Modal -->
+    <div
+      id="detail-modal"
+      class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] hidden flex items-center justify-center"
+    >
+      <div
+        class="bg-surface-container-lowest p-8 rounded-2xl shadow-2xl max-w-2xl w-full mx-4 animate-fade-in max-h-[80vh] overflow-y-auto"
+      >
+        <div class="flex justify-between items-center mb-6">
+          <h3 id="detail-title" class="text-2xl font-bold">Detail Analisis</h3>
+          <button
+            onclick="
+              document.getElementById('detail-modal').classList.add('hidden')
+            "
+            class="p-2 hover:bg-surface-container rounded-full"
+          >
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+        <div id="detail-content" class="space-y-4">
+          <!-- Dynamic content -->
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const InsightsApp = (function () {
+        let currentData = [];
+        let filteredData = [];
+        let currentPage = 1;
+        const itemsPerPage = 10;
+
+        const state = {
+          filters: {
+            timeRange: "all",
+            growthStage: "all",
+            ksRange: "all",
+            deficitRange: "all",
+          },
+          insights: {
+            stress: {
+              title: "Analisis Stres Air",
+              content: "",
+            },
+            precipitation: {
+              title: "Analisis Presipitasi vs Irigasi",
+              content: "",
+            },
+            harvest: {
+              title: "Estimasi Waktu Panen",
+              content: "",
+            },
+            root: {
+              title: "Analisis Kesehatan Akar",
+              content: "",
+            },
+          },
+        };
+
+        const utils = {
+          showNotification: (title, message, type = "info") => {
+            const container = document.getElementById("notification-container");
+            const notif = document.createElement("div");
+            const colors = {
+              info: "border-primary bg-surface-container-lowest",
+              success: "border-secondary bg-secondary-container/30",
+              warning: "border-tertiary bg-tertiary-container/30",
+              error: "border-error bg-error-container/20",
+            };
+
+            notif.className = `${colors[type]} border-2 p-4 rounded-xl shadow-lg max-w-sm animate-fade-in flex items-start gap-3`;
+            notif.innerHTML = `
+              <span class="material-symbols-outlined ${type === "error" ? "text-error" : type === "success" ? "text-secondary" : "text-primary"}">
+                ${type === "success" ? "check_circle" : type === "error" ? "error" : "info"}
+              </span>
+              <div>
+                <div class="font-bold text-sm">${title}</div>
+                <div class="text-xs text-on-surface-variant mt-1">${message}</div>
+              </div>
+            `;
+
+            container.appendChild(notif);
+            setTimeout(() => {
+              notif.style.opacity = "0";
+              notif.style.transform = "translateX(100%)";
+              setTimeout(() => notif.remove(), 300);
+            }, 4000);
+          },
+
+          formatDate: (dateStr) => {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString("id-ID", {
+              day: "numeric",
+              month: "short",
+              year: "numeric",
+            });
+          },
+
+          getKsStatus: (ks) => {
+            if (ks >= 0.9)
+              return {
+                label: "Optimal",
+                color: "text-secondary",
+                bg: "bg-secondary-container/30",
+              };
+            if (ks >= 0.7)
+              return {
+                label: "Sedang",
+                color: "text-tertiary",
+                bg: "bg-tertiary-container/30",
+              };
+            return {
+              label: "Stres",
+              color: "text-error",
+              bg: "bg-error-container/20",
+            };
+          },
+
+          getGrowthStageLabel: (stage) => {
+            const labels = {
+              Vegetative: "Vegetatif",
+              Flowering: "Pembungaan",
+              "Seed filling": "Pengisian Biji",
+              Maturity: "Kematangan",
+            };
+            return labels[stage] || stage;
+          },
+        };
+
+        // FUNGSI FILTER DIPERBAIKI - DEBUGGING TAMBAHAN
+        function applyFilters() {
+          console.log("Applying filters:", state.filters);
+          console.log("Current data count:", currentData.length);
+
+          // Log sample data untuk debugging
+          if (currentData.length > 0) {
+            console.log(
+              "Sample data growth_stage:",
+              currentData[0].growth_stage,
+            );
+            console.log(
+              "Sample data type:",
+              typeof currentData[0].growth_stage,
+            );
+          }
+
+          filteredData = currentData.filter((item) => {
+            // Filter time range
+            if (state.filters.timeRange !== "all") {
+              const itemDate = new Date(item.date);
+              const now = new Date();
+              const diffDays = Math.floor(
+                (now - itemDate) / (1000 * 60 * 60 * 24),
+              );
+
+              if (state.filters.timeRange === "week" && diffDays > 7)
+                return false;
+              if (state.filters.timeRange === "month" && diffDays > 30)
+                return false;
+            }
+
+            // Filter growth stage - DIPERBAIKI dengan pengecekan case-insensitive dan trimming
+            if (state.filters.growthStage !== "all") {
+              const itemStage = String(item.growth_stage || "").trim();
+              const filterStage = state.filters.growthStage;
+
+              // Log untuk debugging
+              console.log(`Comparing: "${itemStage}" vs "${filterStage}"`);
+
+              // Pengecekan exact match tapi case-insensitive
+              if (itemStage.toLowerCase() !== filterStage.toLowerCase()) {
+                return false;
+              }
+            }
+
+            // Filter Ks range
+            if (state.filters.ksRange !== "all") {
+              const ks = parseFloat(item.water_stress_coefficient) || 0;
+              if (state.filters.ksRange === "optimal" && ks < 0.9) return false;
+              if (
+                state.filters.ksRange === "moderate" &&
+                (ks < 0.7 || ks >= 0.9)
+              )
+                return false;
+              if (state.filters.ksRange === "stress" && ks >= 0.7) return false;
+            }
+
+            // Filter deficit
+            if (state.filters.deficitRange !== "all") {
+              const deficit = parseFloat(item.soil_water_deficit) || 0;
+              if (state.filters.deficitRange === "low" && deficit >= 10)
+                return false;
+              if (
+                state.filters.deficitRange === "medium" &&
+                (deficit < 10 || deficit > 25)
+              )
+                return false;
+              if (state.filters.deficitRange === "high" && deficit <= 25)
+                return false;
+            }
+
+            return true;
+          });
+
+          console.log("Filtered data count:", filteredData.length);
+          currentPage = 1;
+          updateDashboard();
+        }
+
+        function updateDashboard() {
+          const data = filteredData.length > 0 ? filteredData : currentData;
+          const count = data.length;
+
+          // Update info
+          document.getElementById("total-records").textContent = count;
+
+          if (count === 0) {
+            utils.showNotification(
+              "Tidak ada data",
+              "Filter yang diterapkan tidak menghasilkan data",
+              "warning",
+            );
+            return;
+          }
+
+          // Calculate KPIs
+          const totalWater = data.reduce(
+            (sum, d) => sum + (parseFloat(d.water_use) || 0),
+            0,
+          );
+          const avgKs =
+            data.reduce(
+              (sum, d) => sum + (parseFloat(d.water_stress_coefficient) || 0),
+              0,
+            ) / count;
+          const avgDeficit =
+            data.reduce(
+              (sum, d) => sum + (parseFloat(d.soil_water_deficit) || 0),
+              0,
+            ) / count;
+          const stressDays = data.filter(
+            (d) => (parseFloat(d.water_stress_coefficient) || 1) < 0.7,
+          ).length;
+
+          const totalPrecip = data.reduce(
+            (sum, d) => sum + (parseFloat(d.precipitation) || 0),
+            0,
+          );
+          const totalIrrig = data.reduce(
+            (sum, d) => sum + (parseFloat(d.irrigation) || 0),
+            0,
+          );
+
+          // Update KPI cards
+          document.getElementById("kpi-total-water").textContent =
+            totalWater.toFixed(1) + " mm";
+          document.getElementById("kpi-avg-ks").textContent = avgKs.toFixed(2);
+          document.getElementById("kpi-avg-deficit").textContent =
+            avgDeficit.toFixed(1) + " mm";
+          document.getElementById("kpi-stress-days").textContent = stressDays;
+          document.getElementById("kpi-stress-percent").textContent =
+            Math.round((stressDays / count) * 100) + "% dari total hari";
+
+          // Update Ks status
+          const ksStatus = utils.getKsStatus(avgKs);
+          document.getElementById("kpi-ks-status").textContent =
+            "Status: " + ksStatus.label;
+          document.getElementById("kpi-ks-status").className =
+            "text-xs mt-1 " + ksStatus.color;
+
+          // Update water trend
+          const recentData = data.slice(-7);
+          const recentWater = recentData.reduce(
+            (sum, d) => sum + (parseFloat(d.water_use) || 0),
+            0,
+          );
+          document.getElementById("weekly-water-avg").textContent =
+            (recentWater / Math.max(recentData.length, 1)).toFixed(1) + " mm";
+
+          const irrigEfficiency =
+            totalPrecip > 0 ? ((totalIrrig / totalPrecip) * 100).toFixed(0) : 0;
+          document.getElementById("irrigation-efficiency").textContent =
+            irrigEfficiency + "%";
+          document.getElementById("water-efficiency-badge").textContent =
+            avgKs > 0.8
+              ? "Efisiensi: Tinggi"
+              : avgKs > 0.6
+                ? "Efisiensi: Sedang"
+                : "Efisiensi: Perlu Perhatian";
+
+          // Water insight text
+          let waterInsight = "";
+          if (avgKs > 0.9) {
+            waterInsight =
+              "Kondisi irigasi optimal. Tanaman mendapatkan air sesuai kebutuhan.";
+          } else if (avgKs > 0.7) {
+            waterInsight =
+              "Kondisi cukup baik, namun perlu monitoring defisit air.";
+          } else {
+            waterInsight =
+              "Perlu peningkatan irigasi. Stres air terdeteksi pada beberapa periode.";
+          }
+          document.getElementById("water-insight-text").textContent =
+            waterInsight;
+
+          // Update precipitation card
+          document.getElementById("total-precipitation").textContent =
+            totalPrecip.toFixed(1) + " mm";
+          document.getElementById("total-irrigation").textContent =
+            totalIrrig.toFixed(1) + " mm";
+
+          const totalInput = totalPrecip + totalIrrig;
+          const precipPercent =
+            totalInput > 0 ? (totalPrecip / totalInput) * 100 : 0;
+          document.getElementById("precipitation-bar").style.width =
+            precipPercent + "%";
+
+          // Update mini trend chart untuk presipitasi
+          renderPrecipTrendMini(data.slice(-7));
+
+          // Update stress card
+          const stressBadge = document.getElementById("stress-alert-badge");
+          if (stressDays > 0) {
+            stressBadge.classList.remove("hidden");
+            document.getElementById("stress-summary").textContent =
+              `${stressDays} hari dengan stres air terdeteksi. Perlu evaluasi jadwal irigasi.`;
+          } else {
+            stressBadge.classList.add("hidden");
+            document.getElementById("stress-summary").textContent =
+              "Tidak ada stres air signifikan. Kondisi tanaman optimal.";
+          }
+
+          // Update growth stage
+          const stageCounts = {};
+          data.forEach((d) => {
+            const stage = String(d.growth_stage || "Unknown").trim();
+            stageCounts[stage] = (stageCounts[stage] || 0) + 1;
+          });
+
+          console.log("Stage counts:", stageCounts);
+
+          const dominantStage =
+            Object.entries(stageCounts).sort((a, b) => b[1] - a[1])[0]?.[0] ||
+            "-";
+          document.getElementById("growth-stage-current").textContent =
+            utils.getGrowthStageLabel(dominantStage);
+          document.getElementById("growth-stage-desc").textContent =
+            `${Math.round(((stageCounts[dominantStage] || 0) / count) * 100)}% dari periode data`;
+
+          // Harvest estimate based on growth stage
+          let harvestDays = "--";
+          if (dominantStage === "Vegetative") harvestDays = "45-60";
+          else if (dominantStage === "Flowering") harvestDays = "25-35";
+          else if (dominantStage === "Seed filling") harvestDays = "15-20";
+          else if (dominantStage === "Maturity") harvestDays = "5-10";
+          document.getElementById("harvest-estimate").textContent = harvestDays;
+
+          // Root depth
+          const avgRoot =
+            data.reduce((sum, d) => sum + (parseFloat(d.root_depth) || 0), 0) /
+            count;
+          document.getElementById("avg-root-depth").textContent =
+            avgRoot > 0 ? avgRoot.toFixed(0) + " cm" : "N/A";
+
+          let rootStatus = "";
+          if (avgRoot > 80)
+            rootStatus = "Kedalaman akar optimal untuk eksplorasi air.";
+          else if (avgRoot > 50)
+            rootStatus = "Pertumbuhan akar baik, terus pantau perkembangan.";
+          else if (avgRoot > 0)
+            rootStatus = "Kedalaman akar masih dangkal, perlu perhatian.";
+          else rootStatus = "Data kedalaman akar tidak tersedia.";
+          document.getElementById("root-health-status").textContent =
+            rootStatus;
+
+          // Render trend bars
+          renderTrendBars(data.slice(-7));
+
+          // Render correlation chart
+          renderCorrelationChart(data);
+
+          // Update detailed insights
+          updateDetailedInsights(
+            data,
+            avgKs,
+            avgDeficit,
+            totalIrrig,
+            totalPrecip,
+          );
+
+          // Render table
+          renderTable();
+
+          // Update modal contents
+          updateModalContents(data, stressDays, avgKs, avgDeficit);
+        }
+
+        // FUNGSI BARU: Render mini trend untuk presipitasi
+        function renderPrecipTrendMini(data) {
+          const container = document.getElementById("precip-trend-mini");
+          if (!container) return;
+
+          container.innerHTML = "";
+          if (data.length === 0) return;
+
+          const maxPrecip = Math.max(
+            ...data.map(
+              (d) =>
+                (parseFloat(d.precipitation) || 0) +
+                (parseFloat(d.irrigation) || 0),
+            ),
+            1,
+          );
+
+          data.forEach((item, i) => {
+            const total =
+              (parseFloat(item.precipitation) || 0) +
+              (parseFloat(item.irrigation) || 0);
+            const height = (total / maxPrecip) * 100;
+
+            const bar = document.createElement("div");
+            bar.className =
+              "flex-1 rounded-t-sm transition-all hover:opacity-80 cursor-pointer relative group";
+            bar.style.height = "0%";
+            bar.style.backgroundColor =
+              (parseFloat(item.precipitation) || 0) >
+              (parseFloat(item.irrigation) || 0)
+                ? "#8c591c"
+                : "#536d22";
+
+            // Tooltip
+            bar.addEventListener("mouseenter", (e) => {
+              const tooltip = document.createElement("div");
+              tooltip.className =
+                "fixed bg-on-background text-surface text-xs font-bold py-2 px-3 rounded-lg pointer-events-none z-50";
+              tooltip.innerHTML = `${utils.formatDate(item.date)}<br/>Hujan: ${(parseFloat(item.precipitation) || 0).toFixed(1)}mm<br/>Irigasi: ${(parseFloat(item.irrigation) || 0).toFixed(1)}mm`;
+              tooltip.style.left = e.clientX + "px";
+              tooltip.style.top = e.clientY - 60 + "px";
+              tooltip.id = "precip-tooltip";
+              document.body.appendChild(tooltip);
+            });
+
+            bar.addEventListener("mouseleave", () => {
+              document.getElementById("precip-tooltip")?.remove();
+            });
+
+            container.appendChild(bar);
+            setTimeout(() => {
+              bar.style.height = Math.max(height, 5) + "%";
+            }, i * 50);
+          });
+        }
+
+        function renderTrendBars(data) {
+          const container = document.getElementById("water-trend-bars");
+          container.innerHTML = "";
+
+          if (data.length === 0) return;
+
+          const maxWater = Math.max(
+            ...data.map((d) => parseFloat(d.water_use) || 0),
+            1,
+          );
+
+          data.forEach((item, i) => {
+            const height = ((parseFloat(item.water_use) || 0) / maxWater) * 100;
+            const bar = document.createElement("div");
+            const ksStatus = utils.getKsStatus(
+              parseFloat(item.water_stress_coefficient) || 1,
+            );
+
+            bar.className =
+              "flex-1 rounded-t-lg transition-all hover:opacity-80 cursor-pointer " +
+              ksStatus.bg;
+            bar.style.height = "0%";
+
+            bar.addEventListener("mouseenter", (e) => {
+              const tooltip = document.createElement("div");
+              tooltip.className =
+                "fixed bg-on-background text-surface text-xs font-bold py-2 px-3 rounded-lg pointer-events-none z-50";
+              tooltip.innerHTML = `${utils.formatDate(item.date)}<br/>Air: ${(parseFloat(item.water_use) || 0).toFixed(1)}mm<br/>Ks: ${(parseFloat(item.water_stress_coefficient) || 0).toFixed(2)}`;
+              tooltip.style.left = e.clientX + "px";
+              tooltip.style.top = e.clientY - 60 + "px";
+              tooltip.id = "trend-tooltip";
+              document.body.appendChild(tooltip);
+            });
+
+            bar.addEventListener("mouseleave", () => {
+              document.getElementById("trend-tooltip")?.remove();
+            });
+
+            container.appendChild(bar);
+            setTimeout(() => {
+              bar.style.height = Math.max(height, 5) + "%";
+            }, i * 100);
+          });
+        }
+
+        function renderCorrelationChart(data) {
+          const container = document.getElementById("correlation-chart");
+          container.innerHTML = "";
+
+          if (data.length === 0) return;
+
+          // Group by Ks ranges
+          const ranges = [
+            { min: 0, max: 0.5, label: "< 0.5", color: "bg-error" },
+            { min: 0.5, max: 0.7, label: "0.5-0.7", color: "bg-tertiary" },
+            { min: 0.7, max: 0.9, label: "0.7-0.9", color: "bg-yellow-500" },
+            { min: 0.9, max: 1, label: "> 0.9", color: "bg-secondary" },
+          ];
+
+          const maxDeficit = Math.max(
+            ...data.map((d) => parseFloat(d.soil_water_deficit) || 0),
+            1,
+          );
+
+          ranges.forEach((range) => {
+            const rangeData = data.filter((d) => {
+              const ks = parseFloat(d.water_stress_coefficient) || 0;
+              return ks >= range.min && ks < range.max;
+            });
+
+            const avgDeficit =
+              rangeData.length > 0
+                ? rangeData.reduce(
+                    (sum, d) => sum + (parseFloat(d.soil_water_deficit) || 0),
+                    0,
+                  ) / rangeData.length
+                : 0;
+
+            const bar = document.createElement("div");
+            bar.className =
+              "w-16 rounded-t-lg " +
+              range.color +
+              " relative group cursor-pointer";
+            bar.style.height = (avgDeficit / maxDeficit) * 100 + "%";
+
+            bar.innerHTML = `
+              <div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-on-background text-surface text-xs font-bold py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                ${avgDeficit.toFixed(1)}mm
+              </div>
+              <div class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs text-on-surface-variant whitespace-nowrap">
+                Ks ${range.label}
+              </div>
+            `;
+
+            container.appendChild(bar);
+          });
+        }
+
+        function updateDetailedInsights(
+          data,
+          avgKs,
+          avgDeficit,
+          totalIrrig,
+          totalPrecip,
+        ) {
+          // Ks insight
+          let ksInsight = "";
+          if (avgKs >= 0.9) {
+            ksInsight =
+              "Rata-rata Ks menunjukkan kondisi optimal tanpa stres air yang signifikan. Tanaman dapat melakukan fotosintesis pada kapasitas maksimal.";
+          } else if (avgKs >= 0.75) {
+            ksInsight =
+              "Rata-rata Ks menunjukkan stres ringan. Tanaman mengalami penurunan evapotranspirasi sekitar " +
+              ((1 - avgKs) * 100).toFixed(0) +
+              "% dari potensialnya.";
+          } else {
+            ksInsight =
+              "Rata-rata Ks menunjukkan stres air signifikan. Produktivitas tanaman berpotensi menurun drastis jika kondisi berlanjut.";
+          }
+          document.getElementById("ks-insight-detail").textContent = ksInsight;
+
+          const ksDistribution = {
+            optimal: data.filter(
+              (d) => (parseFloat(d.water_stress_coefficient) || 0) >= 0.9,
+            ).length,
+            moderate: data.filter((d) => {
+              const ks = parseFloat(d.water_stress_coefficient) || 0;
+              return ks >= 0.7 && ks < 0.9;
+            }).length,
+            stress: data.filter(
+              (d) => (parseFloat(d.water_stress_coefficient) || 0) < 0.7,
+            ).length,
+          };
+          document.getElementById("ks-expanded-detail").innerHTML =
+            `Distribusi Ks: ${ksDistribution.optimal} hari optimal, ${ksDistribution.moderate} hari sedang, ${ksDistribution.stress} hari stres.`;
+
+          // SWD insight
+          let swdInsight = "";
+          if (avgDeficit < 10) {
+            swdInsight =
+              "Defisit air tanah rendah. Ketersediaan air mencukupi untuk kebutuhan tanaman saat ini.";
+          } else if (avgDeficit < 25) {
+            swdInsight =
+              "Defisit air tanah sedang. Perlu pemantauan ketat dan irigasi tepat waktu.";
+          } else {
+            swdInsight =
+              "Defisit air tanah tinggi. Irigasi segera diperlukan untuk mencegah kerusakan permanen.";
+          }
+          document.getElementById("swd-insight-detail").textContent =
+            swdInsight;
+
+          const maxDeficit = Math.max(
+            ...data.map((d) => parseFloat(d.soil_water_deficit) || 0),
+          );
+          document.getElementById("swd-expanded-detail").textContent =
+            `Defisit maksimum: ${maxDeficit.toFixed(1)}mm. Rata-rata: ${avgDeficit.toFixed(1)}mm.`;
+
+          // Irrigation recommendation
+          let irrigRec = "";
+          const ratio = totalPrecip > 0 ? totalIrrig / totalPrecip : 0;
+
+          if (avgDeficit > 20 && avgKs < 0.7) {
+            irrigRec =
+              "Prioritas Tinggi: Tingkatkan frekuensi irigasi. Defisit air tinggi dengan stres signifikan terdeteksi.";
+          } else if (avgDeficit > 15) {
+            irrigRec =
+              "Prioritas Sedang: Pertahankan jadwal irigasi saat ini atau tingkatkan sedikit untuk mengurangi defisit.";
+          } else if (ratio < 0.5 && totalPrecip > 50) {
+            irrigRec =
+              "Prioritas Rendah: Curah hujan cukup memadai. Kurangi irigasi untuk efisiensi air.";
+          } else {
+            irrigRec = "Kondisi stabil. Pertahankan manajemen air saat ini.";
+          }
+          document.getElementById("irrigation-recommendation").textContent =
+            irrigRec;
+          document.getElementById("irrigation-expanded").textContent =
+            `Total irigasi: ${totalIrrig.toFixed(1)}mm. Total presipitasi: ${totalPrecip.toFixed(1)}mm. Rasio I/P: ${ratio.toFixed(2)}`;
+        }
+
+        function updateModalContents(data, stressDays, avgKs, avgDeficit) {
+          // Stress modal
+          state.insights.stress.content = `
+            <div class="space-y-4">
+              <div class="p-4 bg-surface-container-low rounded-lg">
+                <h4 class="font-bold mb-2">Ringkasan Stres Air</h4>
+                <p class="text-sm text-on-surface-variant">
+                  Dari ${data.length} hari data, terdapat ${stressDays} hari dengan kondisi stres air (Ks < 0.7).
+                  Rata-rata Ks: ${avgKs.toFixed(2)}.
+                </p>
+              </div>
+              <div class="space-y-2">
+                <h4 class="font-bold text-sm">Rekomendasi Tindakan:</h4>
+                <ul class="list-disc list-inside text-sm text-on-surface-variant space-y-1">
+                  ${stressDays > 0 ? "<li>Tingkatkan frekuensi irigasi pada periode siang hari</li>" : ""}
+                  ${avgDeficit > 20 ? "<li>Pertimbangkan irigasi tetes untuk efisiensi lebih baik</li>" : ""}
+                  <li>Pantau Ks secara harian pada fase kritis pertumbuhan</li>
+                </ul>
+              </div>
+            </div>
+          `;
+
+          // Precipitation modal
+          const totalPrecip = data.reduce(
+            (sum, d) => sum + (parseFloat(d.precipitation) || 0),
+            0,
+          );
+          const totalIrrig = data.reduce(
+            (sum, d) => sum + (parseFloat(d.irrigation) || 0),
+            0,
+          );
+          const precipDays = data.filter(
+            (d) => (parseFloat(d.precipitation) || 0) > 0,
+          ).length;
+          const irrigDays = data.filter(
+            (d) => (parseFloat(d.irrigation) || 0) > 0,
+          ).length;
+
+          state.insights.precipitation.content = `
+            <div class="space-y-4">
+              <div class="grid grid-cols-2 gap-4">
+                <div class="p-4 bg-surface-container-low rounded-lg text-center">
+                  <p class="text-xs text-on-surface-variant">Total Presipitasi</p>
+                  <p class="text-2xl font-bold text-tertiary">${totalPrecip.toFixed(1)} mm</p>
+                  <p class="text-xs text-on-surface-variant mt-1">${precipDays} hari hujan</p>
+                </div>
+                <div class="p-4 bg-surface-container-low rounded-lg text-center">
+                  <p class="text-xs text-on-surface-variant">Total Irigasi</p>
+                  <p class="text-2xl font-bold text-primary">${totalIrrig.toFixed(1)} mm</p>
+                  <p class="text-xs text-on-surface-variant mt-1">${irrigDays} hari irigasi</p>
+                </div>
+              </div>
+              <div class="p-4 bg-surface-container-low rounded-lg">
+                <h4 class="font-bold mb-2">Analisis Sumber Air</h4>
+                <p class="text-sm text-on-surface-variant">
+                  ${
+                    totalPrecip > totalIrrig
+                      ? "Curah hujan menjadi sumber air utama (" +
+                        (
+                          (totalPrecip / (totalPrecip + totalIrrig)) *
+                          100
+                        ).toFixed(0) +
+                        "%). Irigasi dapat dioptimalkan untuk efisiensi biaya."
+                      : "Irigasi menjadi sumber air dominan (" +
+                        (
+                          (totalIrrig / (totalPrecip + totalIrrig)) *
+                          100
+                        ).toFixed(0) +
+                        "%). Pastikan sistem irigasi berfungsi optimal."
+                  }
+                </p>
+              </div>
+            </div>
+          `;
+
+          // Harvest modal
+          const stageCounts = {};
+          data.forEach((d) => {
+            stageCounts[d.growth_stage] =
+              (stageCounts[d.growth_stage] || 0) + 1;
+          });
+          const currentStage =
+            Object.entries(stageCounts).sort((a, b) => b[1] - a[1])[0]?.[0] ||
+            "-";
+
+          state.insights.harvest.content = `
+            <div class="space-y-4">
+              <div class="p-4 bg-surface-container-low rounded-lg">
+                <h4 class="font-bold mb-2">Tahap Pertumbuhan Saat Ini</h4>
+                <p class="text-lg font-semibold text-primary">${utils.getGrowthStageLabel(currentStage)}</p>
+                <p class="text-sm text-on-surface-variant mt-2">
+                  ${currentStage === "Vegetative" ? "Fase vegetatif aktif. Fokus pada pengembangan daun dan batang." : ""}
+                  ${currentStage === "Flowering" ? "Fase pembungaan kritis. Pastikan pasokan air stabil untuk pembentukan bunga." : ""}
+                  ${currentStage === "Seed filling" ? "Fase pengisian biji. Kualitas panen ditentukan pada fase ini." : ""}
+                  ${currentStage === "Maturity" ? "Fase kematangan. Persiapkan panen dan kurangi irigasi bertahap." : ""}
+                </p>
+              </div>
+            </div>
+          `;
+
+          // Root modal
+          const avgRoot =
+            data.reduce((sum, d) => sum + (parseFloat(d.root_depth) || 0), 0) /
+            data.length;
+          const hasRootData = data.some((d) => parseFloat(d.root_depth) > 0);
+
+          state.insights.root.content = `
+            <div class="space-y-4">
+              <div class="p-4 bg-surface-container-low rounded-lg">
+                <h4 class="font-bold mb-2">Profil Kedalaman Akar</h4>
+                <p class="text-2xl font-bold text-tertiary">${hasRootData ? avgRoot.toFixed(0) + " cm" : "Data tidak tersedia"}</p>
+                <p class="text-sm text-on-surface-variant mt-2">
+                  ${
+                    hasRootData
+                      ? avgRoot > 60
+                        ? "Sistem akar mendalam terbentuk. Eksplorasi air tanah efektif."
+                        : "Sistem akar masih dalam pengembangan. Irigasi permukaan lebih efektif."
+                      : "Tambahkan data root_depth pada CSV untuk analisis lengkap."
+                  }
+                </p>
+              </div>
+            </div>
+          `;
+        }
+
+        function renderTable() {
+          const tbody = document.getElementById("data-table-body");
+          tbody.innerHTML = "";
+
+          const start = (currentPage - 1) * itemsPerPage;
+          const end = start + itemsPerPage;
+          const pageData = filteredData.slice(start, end);
+
+          pageData.forEach((item) => {
+            const ksStatus = utils.getKsStatus(
+              parseFloat(item.water_stress_coefficient) || 0,
+            );
+            const row = document.createElement("tr");
+            row.className =
+              "hover:bg-surface-container-high/50 transition-colors";
+            row.innerHTML = `
+              <td class="px-4 py-3 font-medium">${utils.formatDate(item.date)}</td>
+              <td class="px-4 py-3">${utils.getGrowthStageLabel(item.growth_stage) || "-"}</td>
+              <td class="px-4 py-3 text-right">${(parseFloat(item.precipitation) || 0).toFixed(1)} mm</td>
+              <td class="px-4 py-3 text-right text-primary font-medium">${(parseFloat(item.irrigation) || 0).toFixed(1)} mm</td>
+              <td class="px-4 py-3 text-right">${(parseFloat(item.water_use) || 0).toFixed(1)} mm</td>
+              <td class="px-4 py-3 text-right">${(parseFloat(item.soil_water_deficit) || 0).toFixed(1)} mm</td>
+              <td class="px-4 py-3 text-right font-bold ${ksStatus.color}">${(parseFloat(item.water_stress_coefficient) || 0).toFixed(2)}</td>
+              <td class="px-4 py-3 text-center">
+                <span class="px-2 py-1 rounded-full text-xs font-bold ${ksStatus.bg} ${ksStatus.color}">
+                  ${ksStatus.label}
+                </span>
+              </td>
+            `;
+            tbody.appendChild(row);
+          });
+
+          // Update pagination
+          const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+          document.getElementById("page-info").textContent =
+            `Hal ${currentPage} dari ${totalPages}`;
+          document.getElementById("prev-page").disabled = currentPage === 1;
+          document.getElementById("next-page").disabled =
+            currentPage >= totalPages;
+        }
+
+        function showDetail(type) {
+          const modal = document.getElementById("detail-modal");
+          const insight = state.insights[type];
+
+          if (insight) {
+            document.getElementById("detail-title").textContent = insight.title;
+            document.getElementById("detail-content").innerHTML =
+              insight.content +
+              `
+              <div class="mt-6 flex gap-3">
+                <button onclick="document.getElementById('detail-modal').classList.add('hidden')" class="px-4 py-2 bg-primary text-on-primary rounded-lg font-bold text-sm">Tutup</button>
+              </div>
+            `;
+            modal.classList.remove("hidden");
+          }
+        }
+
+        function expandInsight(element) {
+          const content = element.querySelector(".expanded-content");
+          if (content) {
+            content.classList.toggle("hidden");
+          }
+        }
+
+        function exportReport() {
+          const data = filteredData.length > 0 ? filteredData : currentData;
+          const report = {
+            tanggal_export: new Date().toISOString(),
+            total_catatan: data.length,
+            ringkasan: {
+              total_air: data.reduce(
+                (sum, d) => sum + (parseFloat(d.water_use) || 0),
+                0,
+              ),
+              rata_ks:
+                data.reduce(
+                  (sum, d) =>
+                    sum + (parseFloat(d.water_stress_coefficient) || 0),
+                  0,
+                ) / data.length,
+              rata_defisit:
+                data.reduce(
+                  (sum, d) => sum + (parseFloat(d.soil_water_deficit) || 0),
+                  0,
+                ) / data.length,
+              hari_stres: data.filter(
+                (d) => (parseFloat(d.water_stress_coefficient) || 1) < 0.7,
+              ).length,
+            },
+            data_harian: data,
+          };
+
+          const blob = new Blob([JSON.stringify(report, null, 2)], {
+            type: "application/json",
+          });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = `laporan-sunflower-${new Date().toISOString().split("T")[0]}.json`;
+          a.click();
+          URL.revokeObjectURL(url);
+
+          utils.showNotification(
+            "Export Berhasil",
+            "Laporan telah diunduh",
+            "success",
+          );
+        }
+
+        function init() {
+          // Initialize data
+          const dataService = SunflowerData.init();
+          currentData = SunflowerData.getData() || [];
+          filteredData = [...currentData];
+
+          if (currentData.length === 0) {
+            utils.showNotification(
+              "Perhatian",
+              "Tidak ada data tersedia. Silakan upload CSV terlebih dahulu.",
+              "warning",
+            );
+          } else {
+            utils.showNotification(
+              "Data Dimuat",
+              `Sumber: ${SunflowerData.isRealData() ? "CSV Terunggah" : "Data Demo"} • ${currentData.length} catatan`,
+              "success",
+            );
+          }
+
+          // Time filter buttons
+          document
+            .getElementById("filter-all")
+            .addEventListener("click", function () {
+              document
+                .querySelectorAll(".filter-chip")
+                .forEach((el) => el.classList.remove("active"));
+              this.classList.add("active");
+              state.filters.timeRange = "all";
+              applyFilters();
+            });
+
+          document
+            .getElementById("filter-week")
+            .addEventListener("click", function () {
+              document
+                .querySelectorAll(".filter-chip")
+                .forEach((el) => el.classList.remove("active"));
+              this.classList.add("active");
+              state.filters.timeRange = "week";
+              applyFilters();
+            });
+
+          document
+            .getElementById("filter-month")
+            .addEventListener("click", function () {
+              document
+                .querySelectorAll(".filter-chip")
+                .forEach((el) => el.classList.remove("active"));
+              this.classList.add("active");
+              state.filters.timeRange = "month";
+              applyFilters();
+            });
+
+          // Dropdown filters - DIPERBAIKI dengan logging
+          document
+            .getElementById("filter-growth-stage")
+            .addEventListener("change", function () {
+              console.log("Growth stage filter changed to:", this.value);
+              state.filters.growthStage = this.value;
+              applyFilters();
+            });
+
+          document
+            .getElementById("filter-ks-range")
+            .addEventListener("change", function () {
+              console.log("Ks range filter changed to:", this.value);
+              state.filters.ksRange = this.value;
+              applyFilters();
+            });
+
+          document
+            .getElementById("filter-deficit")
+            .addEventListener("change", function () {
+              console.log("Deficit filter changed to:", this.value);
+              state.filters.deficitRange = this.value;
+              applyFilters();
+            });
+
+          // Reset filters
+          document
+            .getElementById("reset-filters")
+            .addEventListener("click", function () {
+              state.filters = {
+                timeRange: "all",
+                growthStage: "all",
+                ksRange: "all",
+                deficitRange: "all",
+              };
+              document
+                .querySelectorAll(".filter-chip")
+                .forEach((el) => el.classList.remove("active"));
+              document.getElementById("filter-all").classList.add("active");
+              document.getElementById("filter-growth-stage").value = "all";
+              document.getElementById("filter-ks-range").value = "all";
+              document.getElementById("filter-deficit").value = "all";
+              applyFilters();
+              utils.showNotification(
+                "Filter Direset",
+                "Semua filter telah dikembalikan ke default",
+                "success",
+              );
+            });
+
+          // Pagination
+          document
+            .getElementById("prev-page")
+            .addEventListener("click", function () {
+              if (currentPage > 1) {
+                currentPage--;
+                renderTable();
+              }
+            });
+
+          document
+            .getElementById("next-page")
+            .addEventListener("click", function () {
+              const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+              if (currentPage < totalPages) {
+                currentPage++;
+                renderTable();
+              }
+            });
+
+          // Other buttons
+          document
+            .getElementById("refresh-btn")
+            .addEventListener("click", function () {
+              const icon = document.getElementById("refresh-icon");
+              icon.classList.add("animate-spin");
+              setTimeout(() => {
+                icon.classList.remove("animate-spin");
+                const dataService = SunflowerData.init();
+                currentData = dataService.getData() || [];
+                applyFilters();
+                utils.showNotification(
+                  "Diperbarui",
+                  "Analisis berhasil diperbarui",
+                  "success",
+                );
+              }, 1000);
+            });
+
+          document
+            .getElementById("export-btn")
+            .addEventListener("click", exportReport);
+
+          document
+            .getElementById("view-raw-btn")
+            .addEventListener("click", function () {
+              utils.showNotification(
+                "Info",
+                "Fitur data mentah akan tersedia di versi berikutnya",
+                "info",
+              );
+            });
+
+          // Listen for data updates
+          window.addEventListener("sunflower-data-updated", function (e) {
+            const dataService = SunflowerData.init();
+            currentData = dataService.getData() || [];
+            applyFilters();
+            utils.showNotification(
+              "Data Diperbarui",
+              `Data baru diterima dari ${e.detail.source}`,
+              "success",
+            );
+          });
+
+          // Initial render
+          if (currentData.length > 0) {
+            updateDashboard();
+          }
+
+          // Expose functions
+          window.InsightsApp = { showDetail, expandInsight };
+        }
+
+        return { init, showDetail, expandInsight };
+      })();
+
+      document.addEventListener("DOMContentLoaded", InsightsApp.init);
+    </script>
+  </body>
+</html>
