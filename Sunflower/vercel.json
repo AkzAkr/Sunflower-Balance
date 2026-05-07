@@ -1,6 +1,7 @@
 {
   "cleanUrls": true,
   "rewrites": [
+    { "source": "/", "destination": "/dashboard_overview/index.html" },
     { "source": "/dashboard", "destination": "/dashboard_overview/index.html" },
     {
       "source": "/water-input-analysis",
