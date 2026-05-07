@@ -1,0 +1,11 @@
+{
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/dashboard", "destination": "/dashboard_overview/index.html" },
+    { "source": "/water-input-analysis", "destination": "/water_input_analysis/water-input-analysis.html" },
+    { "source": "/plant-response-analysis", "destination": "/plant_response_analysis/plant-response-analysis.html" },
+    { "source": "/stress-analysis", "destination": "/stress_analysis/stress-analysis.html" },
+    { "source": "/growth-stage-analysis", "destination": "/growth_stage_analysis/growth-stage-analysis.html" },
+    { "source": "/insights-summary", "destination": "/insights_summary/insights-summary.html" }
+  ]
+}
